@@ -15,6 +15,7 @@ export interface TwitchTokenInterface {
 export interface JwtPayloadInterface {
   sub: string;
   username: string;
+  type: 'gm' | 'ws';
 }
 
 export interface UserInformationsInterface {

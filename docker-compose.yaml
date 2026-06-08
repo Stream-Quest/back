@@ -19,11 +19,30 @@ services:
     networks:
       - postgresql
       - quest
+      - redis
     env_file:
       - .env
+    depends_on:
+      - redis
+  redis:
+    image: redis:alpine
+    container_name: stream-quest-redis
+    volumes:
+      - redis-data:/data
+    ports:
+      - '6379:6379'
+    restart: always
+    command: redis-server --save 20 1 --loglevel warning --requirepass ${REDIS_PASSWORD}
+    networks:
+      - redis
+
+volumes:
+  redis-data:
 
 networks:
   postgresql:
     external: true
   quest:
+    external: true
+  redis:
     external: true

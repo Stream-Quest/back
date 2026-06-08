@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { SessionStatus } from '../../generated/prisma/enums';
 import { IsEnum, IsNotEmpty } from 'class-validator';
 
-export class UpdateStatusDto {
+export class UpdateSessionStatusDto {
   @ApiProperty({
     enum: SessionStatus,
     enumName: 'SessionStatus',

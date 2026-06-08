@@ -28,7 +28,7 @@ import { CreateSessionDto } from './dto/create-session.dto';
 import { UpdateSessionDto } from './dto/update-session.dto';
 import type { ContextSnapshot, Session } from '../generated/prisma/client';
 import { SessionContext } from './decorator/session.decorator';
-import { UpdateStatusDto } from './dto/update-status.dto';
+import { UpdateSessionStatusDto } from './dto/update-status.dto';
 import { UpdateContextSnapshotDto } from './dto/update-context.dto';
 
 @ApiTags('Session')
@@ -72,7 +72,7 @@ export class SessionController {
   @Patch(':id/status')
   @UpdateSessionStatusRoute("Update a session's status")
   async updateSessionStatus(
-    @Body() updateDto: UpdateStatusDto,
+    @Body() updateDto: UpdateSessionStatusDto,
     @SessionContext() session: Session,
   ): Promise<SessionResponseDto> {
     return await this.sessionService.updateSessionStatus(updateDto, session);

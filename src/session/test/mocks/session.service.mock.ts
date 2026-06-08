@@ -10,3 +10,9 @@ export const createMockSessionService = () => ({
   updateContextSnapshot: jest.fn(),
   deleteSession: jest.fn(),
 });
+
+export const createMockRedisService = () => ({
+  publish: jest.fn(),
+  subscribe: jest.fn(),
+  psubscribe: jest.fn(),
+});

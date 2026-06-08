@@ -135,6 +135,20 @@ export class AuthService {
     res.clearCookie('access_token');
   }
 
+  generateWsToken(user: JwtPayloadInterface): { token: string } {
+    const payload: JwtPayloadInterface = {
+      sub: user.sub,
+      username: user.username,
+      type: 'ws',
+    };
+
+    const jwt = this.jwtService.sign(payload, {
+      expiresIn: '5m',
+    });
+
+    return { token: jwt };
+  }
+
   async handleTwitchCallback(
     code: string,
     state: string,
@@ -261,8 +275,10 @@ export class AuthService {
     const payload: JwtPayloadInterface = {
       sub: user.id,
       username: user.username,
+      type: 'gm',
     };
-    const sevenDaysMaxAge = 7 * 24 * 60 * 60 * 1000;
+
+    const sevenDays = 7 * 24 * 60 * 60 * 1000;
 
     const jwt = this.jwtService.sign(payload);
 
@@ -270,7 +286,7 @@ export class AuthService {
       httpOnly: true,
       signed: true,
       sameSite: 'lax',
-      maxAge: sevenDaysMaxAge,
+      maxAge: sevenDays,
     });
 
     res.redirect(302, process.env.FRONTEND_URL ?? 'http://localhost:3000/');

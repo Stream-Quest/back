@@ -24,5 +24,6 @@ export const createMockUser = (
 ): JwtPayloadInterface => ({
   sub: 'user-123',
   username: 'testuser',
+  type: 'gm',
   ...overrides,
 });
