@@ -5,9 +5,16 @@ import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { CampaignModule } from './campaign/campaign.module';
 import { SessionModule } from './session/session.module';
+import { RedisModule } from './redis/redis.module';
 
 @Module({
-  imports: [PrismaModule, AuthModule, CampaignModule, SessionModule],
+  imports: [
+    PrismaModule,
+    AuthModule,
+    CampaignModule,
+    SessionModule,
+    RedisModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

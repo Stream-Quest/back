@@ -2,7 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { CampaignStatus, ConclusionType } from '../../generated/prisma/enums';
 import { IsEnum, IsOptional } from 'class-validator';
 
-export class UpdateStatusDto {
+export class UpdateCampaignStatusDto {
   @ApiProperty({
     enum: CampaignStatus,
     example: CampaignStatus.ACTIVE,

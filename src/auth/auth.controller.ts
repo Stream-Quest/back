@@ -75,4 +75,12 @@ export class AuthController {
       .status(200)
       .json({ code: 200, message: 'Successfully logged out' });
   }
+
+  @Get('token')
+  @ApiAuthRoute('Get a token for the websocket')
+  getWebSocketToken(@UserContext() user: JwtPayloadInterface): {
+    token: string;
+  } {
+    return this.authService.generateWsToken(user);
+  }
 }

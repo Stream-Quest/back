@@ -11,7 +11,7 @@ import {
 import { ApiTags } from '@nestjs/swagger';
 import { CreateCampaignDto } from './dto/create-campaign.dto';
 import { UpdateCampaignDto } from './dto/update-campaign.dto';
-import { UpdateStatusDto } from './dto/update-status.dto';
+import { UpdateCampaignStatusDto } from './dto/update-status.dto';
 import { UpdateKarmaDto } from './dto/update-karma.dto';
 import { CampaignService } from './campaign.service';
 import { CampaignResponseDto } from './dto/campaign-response.dto';
@@ -77,7 +77,7 @@ export class CampaignController {
   @Patch(':id/status')
   @UpdateCampaignStatusRoute('Update the status of a campaign')
   async updateCampaignStatus(
-    @Body() updateDto: UpdateStatusDto,
+    @Body() updateDto: UpdateCampaignStatusDto,
     @CampaignContext() campaign: Campaign,
   ): Promise<CampaignResponseDto> {
     return this.campaignService.updateCampaignStatus(updateDto, campaign);

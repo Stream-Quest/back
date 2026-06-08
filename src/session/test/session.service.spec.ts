@@ -5,13 +5,17 @@ import { SessionRepository } from '../session.repository';
 import { SessionStatus, TimeOfDay } from '../../generated/prisma/client';
 import { createMockSession } from './fixtures/session.fixture';
 import { createMockSessionRepository } from './mocks/session.repository.mock';
+import { RedisService } from '../../redis/redis.service';
+import { createMockRedisService } from './mocks/session.service.mock';
 
 describe('SessionService', () => {
   let service: SessionService;
   let repository: SessionRepository;
+  let redisService: RedisService;
 
   const mockSession = createMockSession();
   const mockRepository = createMockSessionRepository();
+  const mockRedisService = createMockRedisService();
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -21,11 +25,16 @@ describe('SessionService', () => {
           provide: SessionRepository,
           useValue: mockRepository,
         },
+        {
+          provide: RedisService,
+          useValue: mockRedisService,
+        },
       ],
     }).compile();
 
     service = module.get(SessionService);
     repository = module.get(SessionRepository);
+    redisService = module.get(RedisService);
 
     jest.clearAllMocks();
   });
@@ -173,39 +182,46 @@ describe('SessionService', () => {
   });
 
   describe('startSession', () => {
-    it('should start a PLANNED session', async () => {
+    it('should start a session and publish to Redis', async () => {
       const startedSession = createMockSession({
         status: SessionStatus.LIVE,
         startedAt: new Date(),
       });
-      const spy = jest
-        .spyOn(repository, 'startSession')
-        .mockResolvedValue(startedSession);
+      jest.spyOn(repository, 'startSession').mockResolvedValue(startedSession);
+      jest.spyOn(redisService, 'publish').mockResolvedValue();
 
       const result = await service.startSession(mockSession);
 
       expect(result).toEqual(startedSession);
-      expect(spy).toHaveBeenCalledWith({
-        id: 'session-123',
-      });
+      expect(redisService.publish).toHaveBeenCalledWith(
+        `session:${mockSession.id}:started`,
+        {
+          sessionId: mockSession.id,
+          startedAt: startedSession.startedAt,
+        },
+      );
     });
   });
 
   describe('endSession', () => {
     it('should end a LIVE session', async () => {
-      const liveSession = createMockSession({ status: SessionStatus.LIVE });
       const endedSession = createMockSession({
         status: SessionStatus.ENDED,
         endedAt: new Date(),
       });
-      const spy = jest
-        .spyOn(repository, 'endSession')
-        .mockResolvedValue(endedSession);
+      jest.spyOn(repository, 'endSession').mockResolvedValue(endedSession);
+      jest.spyOn(redisService, 'publish').mockResolvedValue();
 
-      const result = await service.endSession(liveSession);
+      const result = await service.endSession(mockSession);
 
       expect(result).toEqual(endedSession);
-      expect(spy).toHaveBeenCalledWith({ id: 'session-123' });
+      expect(redisService.publish).toHaveBeenCalledWith(
+        `session:${mockSession.id}:ended`,
+        {
+          sessionId: mockSession.id,
+          endedAt: endedSession.endedAt,
+        },
+      );
     });
   });
 
@@ -243,6 +259,13 @@ describe('SessionService', () => {
       await service.updateContextSnapshot(dto, mockSession);
 
       expect(spy).toHaveBeenCalledWith(dto, 'session-123');
+      expect(redisService.publish).toHaveBeenCalledWith(
+        `session:${mockSession.id}:context-updated`,
+        {
+          sessionId: mockSession.id,
+          timeOfDay: 'DAY',
+        },
+      );
     });
   });
 

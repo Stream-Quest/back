@@ -12,12 +12,16 @@ import { paginate } from '../helpers/pagination.helper';
 import { CreateSessionDto } from './dto/create-session.dto';
 import { UpdateSessionDto } from './dto/update-session.dto';
 import { ContextSnapshot, Session } from '../generated/prisma/client';
-import { UpdateStatusDto } from './dto/update-status.dto';
+import { UpdateSessionStatusDto } from './dto/update-status.dto';
 import { UpdateContextSnapshotDto } from './dto/update-context.dto';
+import { RedisService } from '../redis/redis.service';
 
 @Injectable()
 export class SessionService {
-  constructor(private readonly repository: SessionRepository) {}
+  constructor(
+    private readonly repository: SessionRepository,
+    private readonly redisService: RedisService,
+  ) {}
 
   async getSessionList(
     queryDto: SessionQueryDto,
@@ -66,18 +70,34 @@ export class SessionService {
   }
 
   async updateSessionStatus(
-    dto: UpdateStatusDto,
+    dto: UpdateSessionStatusDto,
     session: Session,
   ): Promise<SessionResponseDto> {
     return await this.repository.updateSession({ id: session.id }, dto);
   }
 
   async startSession(session: Session): Promise<Session> {
-    return await this.repository.startSession({ id: session.id });
+    const startedSession = await this.repository.startSession({
+      id: session.id,
+    });
+
+    await this.redisService.publish(`session:${session.id}:started`, {
+      sessionId: session.id,
+      startedAt: startedSession.startedAt,
+    });
+
+    return startedSession;
   }
 
   async endSession(session: Session): Promise<Session> {
-    return await this.repository.endSession({ id: session.id });
+    const endedSession = await this.repository.endSession({ id: session.id });
+
+    await this.redisService.publish(`session:${session.id}:ended`, {
+      sessionId: session.id,
+      endedAt: endedSession.endedAt,
+    });
+
+    return endedSession;
   }
 
   async getContextSnapshots(session: Session): Promise<ContextSnapshot[]> {
@@ -93,5 +113,9 @@ export class SessionService {
     session: Session,
   ): Promise<void> {
     await this.repository.createContextSnapshot(dto, session.id);
+    await this.redisService.publish(`session:${session.id}:context-updated`, {
+      sessionId: session.id,
+      ...dto,
+    });
   }
 }

@@ -6,7 +6,7 @@ import {
 import { CreateCampaignDto } from './dto/create-campaign.dto';
 import { CampaignResponseDto } from './dto/campaign-response.dto';
 import { UpdateCampaignDto } from './dto/update-campaign.dto';
-import { UpdateStatusDto } from './dto/update-status.dto';
+import { UpdateCampaignStatusDto } from './dto/update-status.dto';
 import { UpdateKarmaDto } from './dto/update-karma.dto';
 import { CampaignQueryDto } from './dto/campaign-query.dto';
 import { CampaignRepository } from './campaign.repository';
@@ -114,7 +114,7 @@ export class CampaignService {
   }
 
   async updateCampaignStatus(
-    dto: UpdateStatusDto,
+    dto: UpdateCampaignStatusDto,
     campaign: Campaign,
   ): Promise<CampaignResponseDto> {
     const campaignId: string = campaign.id;
