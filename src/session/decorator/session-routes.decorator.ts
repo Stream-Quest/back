@@ -23,7 +23,7 @@ const SESSION_OWNERSHIP_GUARD_EXCEPTIONS = [
       { summary: 'Not authenticated', message: 'User not authenticated' },
       {
         summary: 'Not owner',
-        message: 'You do not have permission to access this campaign',
+        message: 'You do not have permission to access this session',
       },
     ],
     'Forbidden',
@@ -31,7 +31,7 @@ const SESSION_OWNERSHIP_GUARD_EXCEPTIONS = [
   customErrorResponse(400, 'Session id not provided', 'Bad Request'),
   multipleErrorResponses(404, [
     { summary: 'Not Found', message: 'Session not found' },
-    { summary: 'Not Found', message: 'Campaing not found' },
+    { summary: 'Not Found', message: 'Campaign not found' },
   ]),
 ];
 
@@ -69,7 +69,7 @@ export function GetSessionDetailsRoute(summary: string) {
     responses: [
       {
         status: 200,
-        description: 'Returns sessions',
+        description: 'Returns session',
         type: SessionResponseDto,
       },
       customErrorResponse(400, 'Session id not provided', 'Bad Request'),
