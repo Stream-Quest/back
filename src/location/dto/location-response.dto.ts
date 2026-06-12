@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
-export class WeatherResponseDto {
+export class LocationResponseDto {
   @ApiProperty({
     example: '550e8400-e29b-41d4-a716-446655440000',
     description: 'Session unique identifier',
@@ -8,28 +8,28 @@ export class WeatherResponseDto {
   id: string;
 
   @ApiProperty({
-    example: 'SUNNY',
-    description: 'Session weather name',
+    example: 'FOREST',
+    description: 'Session location name',
   })
   name: string;
 
   @ApiProperty({
-    example: 'Sunny',
-    description: 'Session weather displayed name',
+    example: 'Forest',
+    description: 'Session location displayed name',
   })
   displayName: string;
 
   @ApiPropertyOptional({
-    example: 'A sunny day',
-    description: 'Session weather description',
+    example: 'A simple forest',
+    description: 'Session location description',
   })
   description?: string | null;
 
   @ApiPropertyOptional({
-    example: 'https://some-random.url/some-random-icon',
-    description: 'Session weather icon URL',
+    example: 'https://some-random.url/some-random-image',
+    description: 'Session location image URL',
   })
-  iconUrl?: string | null;
+  imageUrl?: string | null;
 
   @ApiProperty({
     example: '2026-05-13T10:00:00.000Z',

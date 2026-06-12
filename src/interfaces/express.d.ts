@@ -1,4 +1,9 @@
-import { Campaign, Weather } from '../generated/prisma/client';
+import {
+  Campaign,
+  Location,
+  Session,
+  Weather,
+} from '../generated/prisma/client';
 import { JwtPayloadInterface } from '../auth/interface/auth.interface';
 
 declare global {
@@ -8,6 +13,7 @@ declare global {
       campaign?: Campaign;
       session?: Session;
       weather?: Weather;
+      location?: Location;
     }
   }
 }
