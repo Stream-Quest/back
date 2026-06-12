@@ -2,7 +2,6 @@ import { applyDecorators, UseGuards } from '@nestjs/common';
 import { ApiAuthRoute } from '../../auth/decorator/api-auth.decorator';
 import {
   customErrorResponse,
-  multipleErrorResponses,
   PAGINATION_QUERIES,
 } from '../../helpers/swagger.helper';
 import { WeatherResponseDto } from '../dto/weather-response.dto';
@@ -15,17 +14,7 @@ const WEATHER_ID_PARAM = {
 };
 
 const WEATHER_OWNERSHIP_GUARD_EXCEPTIONS = [
-  multipleErrorResponses(
-    403,
-    [
-      { summary: 'Not authenticated', message: 'User not authenticated' },
-      {
-        summary: 'Not owner',
-        message: 'You do not have permission to access this weather',
-      },
-    ],
-    'Forbidden',
-  ),
+  customErrorResponse(403, 'User not authenticated', 'Forbidden'),
   customErrorResponse(400, 'Weather id not provided', 'Bad Request'),
   customErrorResponse(404, 'Weather not found', 'Not found'),
 ];
@@ -36,7 +25,7 @@ export function GetWeatherListRoute(summary: string) {
     responses: [
       {
         status: 200,
-        description: 'Returns the list of weathers for a session',
+        description: 'Returns the list of weathers',
         type: [WeatherResponseDto],
       },
     ],
@@ -78,7 +67,7 @@ export function UpdateWeatherRoute(summary: string) {
 }
 
 export function DeleteWeatherRoute(summary: string) {
-  return weatherOwnershipRoute(summary, 'Deletes a session');
+  return weatherOwnershipRoute(summary, 'Deletes a weather');
 }
 
 function weatherOwnershipRoute(

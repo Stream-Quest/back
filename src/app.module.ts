@@ -7,6 +7,7 @@ import { CampaignModule } from './campaign/campaign.module';
 import { SessionModule } from './session/session.module';
 import { RedisModule } from './redis/redis.module';
 import { WeatherModule } from './weather/weather.module';
+import { LocationModule } from './location/location.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { WeatherModule } from './weather/weather.module';
     SessionModule,
     RedisModule,
     WeatherModule,
+    LocationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

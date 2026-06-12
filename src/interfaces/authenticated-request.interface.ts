@@ -1,4 +1,9 @@
-import { Campaign, Session, Weather } from '../generated/prisma/client';
+import {
+  Campaign,
+  Location,
+  Session,
+  Weather,
+} from '../generated/prisma/client';
 import { JwtPayloadInterface } from '../auth/interface/auth.interface';
 
 export interface AuthenticatedRequest extends Request {
@@ -19,4 +24,9 @@ export interface AuthenticatedRequestWithSession extends Request {
 export interface AuthenticatedRequestWithWeather extends Request {
   user: JwtPayloadInterface;
   weather: Weather;
+}
+
+export interface AuthenticatedRequestWithLocation extends Request {
+  user: JwtPayloadInterface;
+  location: Location;
 }
