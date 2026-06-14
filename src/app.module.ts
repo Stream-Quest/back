@@ -8,6 +8,7 @@ import { SessionModule } from './session/session.module';
 import { RedisModule } from './redis/redis.module';
 import { WeatherModule } from './weather/weather.module';
 import { LocationModule } from './location/location.module';
+import { PlayerCharacterModule } from './player-character/player-character.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { LocationModule } from './location/location.module';
     RedisModule,
     WeatherModule,
     LocationModule,
+    PlayerCharacterModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,6 +1,7 @@
 import {
   Campaign,
   Location,
+  PlayerCharacter,
   Session,
   Weather,
 } from '../generated/prisma/client';
@@ -29,4 +30,9 @@ export interface AuthenticatedRequestWithWeather extends Request {
 export interface AuthenticatedRequestWithLocation extends Request {
   user: JwtPayloadInterface;
   location: Location;
+}
+
+export interface AuthenticatedRequestWithPlayerCharacter extends Request {
+  user: JwtPayloadInterface;
+  playerCharacter: PlayerCharacter;
 }

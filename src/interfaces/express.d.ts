@@ -1,6 +1,7 @@
 import {
   Campaign,
   Location,
+  PlayerCharacter,
   Session,
   Weather,
 } from '../generated/prisma/client';
@@ -14,6 +15,7 @@ declare global {
       session?: Session;
       weather?: Weather;
       location?: Location;
+      playerCharacter?: PlayerCharacter;
     }
   }
 }
