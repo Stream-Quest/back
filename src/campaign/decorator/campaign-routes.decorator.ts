@@ -1,13 +1,13 @@
 import { applyDecorators, UseGuards } from '@nestjs/common';
-import { CampaignResponseDto } from './dto/campaign-response.dto';
-import { ApiAuthRoute } from '../auth/decorator/api-auth.decorator';
-import { CampaignOwnershipGuard } from './guard/campaign-ownership.guard';
+import { CampaignResponseDto } from '../dto/campaign-response.dto';
+import { ApiAuthRoute } from '../../auth/decorator/api-auth.decorator';
+import { CampaignOwnershipGuard } from '../guard/campaign-ownership.guard';
 import {
   customErrorResponse,
   multipleErrorResponses,
   PAGINATION_QUERIES,
-} from '../helpers/swagger.helper';
-import { FilterDeletionStatus } from '../enum/filter-status.enum';
+} from '../../helpers/swagger.helper';
+import { FilterDeletionStatus } from '../../enum/filter-status.enum';
 
 const CAMPAIGN_ID_PARAM = {
   name: 'id',

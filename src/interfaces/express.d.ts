@@ -1,5 +1,6 @@
 import {
   Campaign,
+  EventType,
   Location,
   PlayerCharacter,
   Session,
@@ -16,6 +17,7 @@ declare global {
       weather?: Weather;
       location?: Location;
       playerCharacter?: PlayerCharacter;
+      eventType?: EventType;
     }
   }
 }

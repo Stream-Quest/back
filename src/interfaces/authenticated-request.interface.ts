@@ -1,5 +1,6 @@
 import {
   Campaign,
+  EventType,
   Location,
   PlayerCharacter,
   Session,
@@ -35,4 +36,9 @@ export interface AuthenticatedRequestWithLocation extends Request {
 export interface AuthenticatedRequestWithPlayerCharacter extends Request {
   user: JwtPayloadInterface;
   playerCharacter: PlayerCharacter;
+}
+
+export interface AuthenticatedRequestWithEventType extends Request {
+  user: JwtPayloadInterface;
+  eventType: EventType;
 }

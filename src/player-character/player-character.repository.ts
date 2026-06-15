@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import {
+  PlayerCharacterFindManyArgs,
   PlayerCharacterOrderByWithRelationInput,
   PlayerCharacterUpdateInput,
   PlayerCharacterWhereUniqueInput,
 } from '../generated/prisma/models';
 import { PlayerCharacter } from '../generated/prisma/client';
 import { CreatePlayerCharacterDto } from './dto/create-player-character.dto';
+import { paginatedFindMany } from '../helpers/pagination.helper';
 
 @Injectable()
 export class PlayerCharacterRepository {
@@ -18,19 +20,10 @@ export class PlayerCharacterRepository {
     direction?: 'forward' | 'backward';
     orderBy?: PlayerCharacterOrderByWithRelationInput;
   }): Promise<PlayerCharacter[]> {
-    const isBackward = options?.direction === 'backward';
-    const take = options?.take || 10;
-
-    const result = await this.prisma.playerCharacter.findMany({
-      take: isBackward ? -take : take,
-      ...(options?.cursor && {
-        skip: 1,
-        cursor: { id: options.cursor },
-      }),
-      orderBy: options?.orderBy || { createdAt: 'desc' },
-    });
-
-    return isBackward ? result.reverse() : result;
+    return paginatedFindMany<PlayerCharacter, PlayerCharacterFindManyArgs>(
+      (args) => this.prisma.playerCharacter.findMany(args),
+      options,
+    );
   }
 
   async getPlayerCharacter(
