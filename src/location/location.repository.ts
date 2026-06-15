@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import {
+  LocationFindManyArgs,
   LocationOrderByWithRelationInput,
   LocationUpdateInput,
   LocationWhereUniqueInput,
 } from '../generated/prisma/models';
 import { Location } from '../generated/prisma/client';
 import { CreateLocationDto } from './dto/create-location.dto';
+import { paginatedFindMany } from '../helpers/pagination.helper';
 
 @Injectable()
 export class LocationRepository {
@@ -18,19 +20,10 @@ export class LocationRepository {
     direction?: 'forward' | 'backward';
     orderBy?: LocationOrderByWithRelationInput;
   }): Promise<Location[]> {
-    const isBackward = options?.direction === 'backward';
-    const take = options?.take || 10;
-
-    const result = await this.prisma.location.findMany({
-      take: isBackward ? -take : take,
-      ...(options?.cursor && {
-        skip: 1,
-        cursor: { id: options.cursor },
-      }),
-      orderBy: options?.orderBy || { createdAt: 'desc' },
-    });
-
-    return isBackward ? result.reverse() : result;
+    return paginatedFindMany<Location, LocationFindManyArgs>(
+      (args) => this.prisma.location.findMany(args),
+      options,
+    );
   }
 
   async getLocation(where: LocationWhereUniqueInput): Promise<Location | null> {

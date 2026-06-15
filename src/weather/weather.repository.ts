@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import {
+  WeatherFindManyArgs,
   WeatherOrderByWithRelationInput,
   WeatherUpdateInput,
   WeatherWhereUniqueInput,
 } from '../generated/prisma/models';
 import { Weather } from '../generated/prisma/client';
 import { CreateWeatherDto } from './dto/create-weather.dto';
+import { paginatedFindMany } from '../helpers/pagination.helper';
 
 @Injectable()
 export class WeatherRepository {
@@ -18,19 +20,10 @@ export class WeatherRepository {
     direction?: 'forward' | 'backward';
     orderBy?: WeatherOrderByWithRelationInput;
   }): Promise<Weather[]> {
-    const isBackward = options?.direction === 'backward';
-    const take = options?.take || 10;
-
-    const result = await this.prisma.weather.findMany({
-      take: isBackward ? -take : take,
-      ...(options?.cursor && {
-        skip: 1,
-        cursor: { id: options.cursor },
-      }),
-      orderBy: options?.orderBy || { createdAt: 'desc' },
-    });
-
-    return isBackward ? result.reverse() : result;
+    return paginatedFindMany<Weather, WeatherFindManyArgs>(
+      (args) => this.prisma.weather.findMany(args),
+      options,
+    );
   }
 
   async getWeather(where: WeatherWhereUniqueInput): Promise<Weather | null> {

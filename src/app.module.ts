@@ -9,6 +9,7 @@ import { RedisModule } from './redis/redis.module';
 import { WeatherModule } from './weather/weather.module';
 import { LocationModule } from './location/location.module';
 import { PlayerCharacterModule } from './player-character/player-character.module';
+import { EventTypeModule } from './event-type/event-type.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { PlayerCharacterModule } from './player-character/player-character.modul
     WeatherModule,
     LocationModule,
     PlayerCharacterModule,
+    EventTypeModule,
   ],
   controllers: [AppController],
   providers: [AppService],

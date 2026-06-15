@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import {
   CampaignCreateInput,
+  CampaignFindManyArgs,
   CampaignOrderByWithRelationInput,
   CampaignUpdateInput,
   CampaignWhereInput,
@@ -8,9 +9,19 @@ import {
 } from '../generated/prisma/models';
 import { PrismaService } from '../prisma/prisma.service';
 import { Campaign } from '../generated/prisma/client';
+import { paginatedFindMany } from '../helpers/pagination.helper';
 
 @Injectable()
 export class CampaignRepository {
+  private readonly includeCount = {
+    _count: {
+      select: {
+        sessions: true,
+        campaignEvents: true,
+      },
+    },
+  };
+
   constructor(private readonly prisma: PrismaService) {}
 
   async getCampaignList(
@@ -22,41 +33,16 @@ export class CampaignRepository {
       orderBy?: CampaignOrderByWithRelationInput;
     },
   ): Promise<Campaign[]> {
-    const isBackward = options?.direction === 'backward';
-    const take = options?.take || 10;
-
-    const result = (await this.prisma.campaign.findMany({
-      where,
-      take: isBackward ? -take : take,
-      ...(options?.cursor && {
-        skip: 1,
-        cursor: { id: options.cursor },
-      }),
-      orderBy: options?.orderBy || { createdAt: 'desc' },
-      include: {
-        _count: {
-          select: {
-            sessions: true,
-            campaignEvents: true,
-          },
-        },
-      },
-    })) as Campaign[];
-
-    return isBackward ? result.reverse() : result;
+    return paginatedFindMany<Campaign, CampaignFindManyArgs>(
+      (args) => this.prisma.campaign.findMany(args),
+      { ...options, where, include: this.includeCount },
+    );
   }
 
   async getCampaign(where: CampaignWhereInput): Promise<Campaign | null> {
     return this.prisma.campaign.findFirst({
       where,
-      include: {
-        _count: {
-          select: {
-            sessions: true,
-            campaignEvents: true,
-          },
-        },
-      },
+      include: this.includeCount,
     });
   }
 
@@ -114,14 +100,7 @@ export class CampaignRepository {
     return this.prisma.campaign.update({
       where,
       data,
-      include: {
-        _count: {
-          select: {
-            sessions: true,
-            campaignEvents: true,
-          },
-        },
-      },
+      include: this.includeCount,
     });
   }
 }

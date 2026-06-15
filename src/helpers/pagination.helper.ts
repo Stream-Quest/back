@@ -13,6 +13,19 @@ export interface PaginatedResult<T> {
   hasPrevious: boolean;
 }
 
+export interface RepositoryPaginationOptions<
+  Where,
+  OrderBy,
+  Include = unknown,
+> {
+  where?: Where;
+  take?: number;
+  cursor?: string;
+  direction?: 'forward' | 'backward';
+  orderBy?: OrderBy;
+  include?: Include;
+}
+
 export function paginate<T extends { id: string }>(
   items: T[],
   options: PaginationOptions,
@@ -29,4 +42,27 @@ export function paginate<T extends { id: string }>(
     hasMore,
     hasPrevious: !!options.cursor,
   };
+}
+
+export async function paginatedFindMany<T, Args>(
+  findMany: (args: Args) => Promise<T[]>,
+  options?: RepositoryPaginationOptions<unknown, unknown>,
+): Promise<T[]> {
+  const isBackward = options?.direction === 'backward';
+  const take = options?.take || 10;
+
+  const args = {
+    ...(options?.where ? { where: options.where } : {}),
+    take: isBackward ? -take : take,
+    ...(options?.cursor && {
+      skip: 1,
+      cursor: { id: options.cursor },
+    }),
+    orderBy: options?.orderBy || { createdAt: 'desc' },
+    ...(options?.include ? { include: options.include } : {}),
+  } as unknown as Args;
+
+  const result = await findMany(args);
+
+  return isBackward ? result.reverse() : result;
 }

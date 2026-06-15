@@ -34,13 +34,13 @@ export class PlayerCharacterService {
       throw new BadRequestException('PlayerCharacter id is missing');
     }
 
-    const playercharacter = await this.repository.getPlayerCharacter({ id });
+    const playerCharacter = await this.repository.getPlayerCharacter({ id });
 
-    if (!playercharacter) {
+    if (!playerCharacter) {
       throw new NotFoundException('PlayerCharacter not found');
     }
 
-    return playercharacter;
+    return playerCharacter;
   }
 
   async createPlayerCharacter(
@@ -51,19 +51,19 @@ export class PlayerCharacterService {
 
   async updatePlayerCharacter(
     dto: UpdatePlayerCharacterDto,
-    playercharacter: PlayerCharacter,
+    playerCharacter: PlayerCharacter,
   ): Promise<PlayerCharacterResponseDto> {
     return await this.repository.updatePlayerCharacter(
-      { id: playercharacter.id },
+      { id: playerCharacter.id },
       dto,
     );
   }
 
   async deletePlayerCharacter(
-    playercharacter: PlayerCharacter,
+    playerCharacter: PlayerCharacter,
   ): Promise<PlayerCharacter> {
     return await this.repository.deletePlayerCharacter({
-      id: playercharacter.id,
+      id: playerCharacter.id,
     });
   }
 }
