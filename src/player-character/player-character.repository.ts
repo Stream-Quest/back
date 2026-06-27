@@ -8,7 +8,10 @@ import {
 } from '../generated/prisma/models';
 import { PlayerCharacter } from '../generated/prisma/client';
 import { CreatePlayerCharacterDto } from './dto/create-player-character.dto';
-import { paginatedFindMany } from '../helpers/pagination.helper';
+import {
+  buildPaginationArgs,
+  paginatedFindMany,
+} from '../helpers/pagination.helper';
 
 @Injectable()
 export class PlayerCharacterRepository {
@@ -20,9 +23,12 @@ export class PlayerCharacterRepository {
     direction?: 'forward' | 'backward';
     orderBy?: PlayerCharacterOrderByWithRelationInput;
   }): Promise<PlayerCharacter[]> {
-    return paginatedFindMany<PlayerCharacter, PlayerCharacterFindManyArgs>(
-      (args) => this.prisma.playerCharacter.findMany(args),
-      options,
+    return paginatedFindMany<PlayerCharacter>(
+      () =>
+        this.prisma.playerCharacter.findMany(
+          buildPaginationArgs<PlayerCharacterFindManyArgs>(options),
+        ),
+      options?.direction,
     );
   }
 

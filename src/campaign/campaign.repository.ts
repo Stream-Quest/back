@@ -8,20 +8,34 @@ import {
   CampaignWhereUniqueInput,
 } from '../generated/prisma/models';
 import { PrismaService } from '../prisma/prisma.service';
-import { Campaign } from '../generated/prisma/client';
-import { paginatedFindMany } from '../helpers/pagination.helper';
+import { Campaign, Prisma } from '../generated/prisma/client';
+import {
+  buildPaginationArgs,
+  paginatedFindMany,
+} from '../helpers/pagination.helper';
+
+export type CampaignWithCount = Prisma.CampaignGetPayload<{
+  include: {
+    _count: {
+      select: {
+        sessions: true;
+        campaignEvents: true;
+      };
+    };
+  };
+}>;
+
+const CAMPAIGN_INCLUDE_COUNT = {
+  _count: {
+    select: {
+      sessions: true,
+      campaignEvents: true,
+    },
+  },
+} satisfies Prisma.CampaignInclude;
 
 @Injectable()
 export class CampaignRepository {
-  private readonly includeCount = {
-    _count: {
-      select: {
-        sessions: true,
-        campaignEvents: true,
-      },
-    },
-  };
-
   constructor(private readonly prisma: PrismaService) {}
 
   async getCampaignList(
@@ -32,17 +46,24 @@ export class CampaignRepository {
       direction?: 'forward' | 'backward';
       orderBy?: CampaignOrderByWithRelationInput;
     },
-  ): Promise<Campaign[]> {
-    return paginatedFindMany<Campaign, CampaignFindManyArgs>(
-      (args) => this.prisma.campaign.findMany(args),
-      { ...options, where, include: this.includeCount },
+  ): Promise<CampaignWithCount[]> {
+    return paginatedFindMany<CampaignWithCount>(
+      () =>
+        this.prisma.campaign.findMany({
+          ...buildPaginationArgs<CampaignFindManyArgs>(options),
+          where,
+          include: CAMPAIGN_INCLUDE_COUNT,
+        }),
+      options?.direction,
     );
   }
 
-  async getCampaign(where: CampaignWhereInput): Promise<Campaign | null> {
+  async getCampaign(
+    where: CampaignWhereInput,
+  ): Promise<CampaignWithCount | null> {
     return this.prisma.campaign.findFirst({
       where,
-      include: this.includeCount,
+      include: CAMPAIGN_INCLUDE_COUNT,
     });
   }
 
@@ -55,35 +76,35 @@ export class CampaignRepository {
   async updateCampaign(
     where: CampaignWhereUniqueInput,
     data: CampaignUpdateInput,
-  ): Promise<Campaign> {
+  ): Promise<CampaignWithCount> {
     return this.prismaUpdate(where, data);
   }
 
   async updateCampaignStatus(
     where: CampaignWhereUniqueInput,
     data: CampaignUpdateInput,
-  ): Promise<Campaign> {
+  ): Promise<CampaignWithCount> {
     return this.prismaUpdate(where, data);
   }
 
   async updateCampaignKarma(
     where: CampaignWhereUniqueInput,
     data: CampaignUpdateInput,
-  ): Promise<Campaign> {
+  ): Promise<CampaignWithCount> {
     return this.prismaUpdate(where, data);
   }
 
   async softRemoveCampaign(
     where: CampaignWhereUniqueInput,
     data: CampaignUpdateInput,
-  ): Promise<Campaign> {
+  ): Promise<CampaignWithCount> {
     return this.prismaUpdate(where, data);
   }
 
   async restoreSoftRemovedCampaign(
     where: CampaignWhereUniqueInput,
     data: CampaignUpdateInput,
-  ): Promise<Campaign> {
+  ): Promise<CampaignWithCount> {
     return this.prismaUpdate(where, data);
   }
 
@@ -96,11 +117,11 @@ export class CampaignRepository {
   private async prismaUpdate(
     where: CampaignWhereUniqueInput,
     data: CampaignUpdateInput,
-  ): Promise<Campaign> {
+  ): Promise<CampaignWithCount> {
     return this.prisma.campaign.update({
       where,
       data,
-      include: this.includeCount,
+      include: CAMPAIGN_INCLUDE_COUNT,
     });
   }
 }

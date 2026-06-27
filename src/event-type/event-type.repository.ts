@@ -6,7 +6,10 @@ import {
   EventTypeUpdateInput,
   EventTypeWhereUniqueInput,
 } from '../generated/prisma/models';
-import { paginatedFindMany } from '../helpers/pagination.helper';
+import {
+  buildPaginationArgs,
+  paginatedFindMany,
+} from '../helpers/pagination.helper';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateEventTypeDto } from './dto/create-event-type.dto';
 
@@ -20,9 +23,12 @@ export class EventTypeRepository {
     direction?: 'forward' | 'backward';
     orderBy?: EventTypeOrderByWithRelationInput;
   }): Promise<EventType[]> {
-    return paginatedFindMany<EventType, EventTypeFindManyArgs>(
-      (args) => this.prisma.eventType.findMany(args),
-      options,
+    return paginatedFindMany<EventType>(
+      () =>
+        this.prisma.eventType.findMany(
+          buildPaginationArgs<EventTypeFindManyArgs>(options),
+        ),
+      options?.direction,
     );
   }
 

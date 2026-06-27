@@ -8,7 +8,10 @@ import {
 } from '../generated/prisma/models';
 import { Weather } from '../generated/prisma/client';
 import { CreateWeatherDto } from './dto/create-weather.dto';
-import { paginatedFindMany } from '../helpers/pagination.helper';
+import {
+  buildPaginationArgs,
+  paginatedFindMany,
+} from '../helpers/pagination.helper';
 
 @Injectable()
 export class WeatherRepository {
@@ -20,9 +23,12 @@ export class WeatherRepository {
     direction?: 'forward' | 'backward';
     orderBy?: WeatherOrderByWithRelationInput;
   }): Promise<Weather[]> {
-    return paginatedFindMany<Weather, WeatherFindManyArgs>(
-      (args) => this.prisma.weather.findMany(args),
-      options,
+    return paginatedFindMany<Weather>(
+      () =>
+        this.prisma.weather.findMany(
+          buildPaginationArgs<WeatherFindManyArgs>(options),
+        ),
+      options?.direction,
     );
   }
 
@@ -34,12 +40,7 @@ export class WeatherRepository {
 
   async createWeather(dto: CreateWeatherDto): Promise<Weather> {
     return await this.prisma.weather.create({
-      data: {
-        name: dto.name.toUpperCase(),
-        displayName: dto.displayName,
-        description: dto.description,
-        iconUrl: dto.iconUrl,
-      },
+      data: { ...dto, name: dto.name.toUpperCase() },
     });
   }
 

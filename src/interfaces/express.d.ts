@@ -1,8 +1,11 @@
 import {
   Campaign,
+  Event,
   EventType,
   Location,
   PlayerCharacter,
+  Resolution,
+  Rule,
   Session,
   Weather,
 } from '../generated/prisma/client';
@@ -18,6 +21,9 @@ declare global {
       location?: Location;
       playerCharacter?: PlayerCharacter;
       eventType?: EventType;
+      event?: Event;
+      rule?: Rule;
+      resolution?: Resolution;
     }
   }
 }
