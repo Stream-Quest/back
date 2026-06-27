@@ -44,25 +44,29 @@ export function paginate<T extends { id: string }>(
   };
 }
 
-export async function paginatedFindMany<T, Args>(
-  findMany: (args: Args) => Promise<T[]>,
-  options?: RepositoryPaginationOptions<unknown, unknown>,
-): Promise<T[]> {
+export function buildPaginationArgs<T>(options?: {
+  take?: number;
+  cursor?: string;
+  direction?: 'forward' | 'backward';
+  orderBy?: unknown;
+}): T {
   const isBackward = options?.direction === 'backward';
   const take = options?.take || 10;
 
-  const args = {
-    ...(options?.where ? { where: options.where } : {}),
+  return {
     take: isBackward ? -take : take,
     ...(options?.cursor && {
       skip: 1,
       cursor: { id: options.cursor },
     }),
     orderBy: options?.orderBy || { createdAt: 'desc' },
-    ...(options?.include ? { include: options.include } : {}),
-  } as unknown as Args;
+  } as unknown as T;
+}
 
-  const result = await findMany(args);
-
-  return isBackward ? result.reverse() : result;
+export async function paginatedFindMany<T>(
+  findMany: () => Promise<T[]>,
+  direction?: 'forward' | 'backward',
+): Promise<T[]> {
+  const result = await findMany();
+  return direction === 'backward' ? result.reverse() : result;
 }

@@ -10,27 +10,45 @@ import {
 } from '../generated/prisma/models';
 import {
   ContextSnapshot,
+  Prisma,
   Session,
   SessionStatus,
 } from '../generated/prisma/client';
 import { UpdateContextSnapshotDto } from './dto/update-context.dto';
 import { CreateSessionDto } from './dto/create-session.dto';
-import { paginatedFindMany } from '../helpers/pagination.helper';
+import {
+  buildPaginationArgs,
+  paginatedFindMany,
+} from '../helpers/pagination.helper';
+
+export type SessionWithCount = Prisma.SessionGetPayload<{
+  include: {
+    _count: {
+      select: {
+        contextSnapshots: true;
+        karmaEvents: true;
+        sessionEvents: true;
+        sessionPlayers: true;
+        viewerInteractions: true;
+      };
+    };
+  };
+}>;
+
+const SESSION_INCLUDE_COUNT = {
+  _count: {
+    select: {
+      contextSnapshots: true,
+      karmaEvents: true,
+      sessionEvents: true,
+      sessionPlayers: true,
+      viewerInteractions: true,
+    },
+  },
+} satisfies Prisma.SessionInclude;
 
 @Injectable()
 export class SessionRepository {
-  private readonly includeCount = {
-    _count: {
-      select: {
-        contextSnapshots: true,
-        karmaEvents: true,
-        sessionEvents: true,
-        sessionPlayers: true,
-        viewerInteractions: true,
-      },
-    },
-  };
-
   constructor(private readonly prisma: PrismaService) {}
 
   async getSessionList(
@@ -41,55 +59,65 @@ export class SessionRepository {
       direction?: 'forward' | 'backward';
       orderBy?: SessionOrderByWithRelationInput;
     },
-  ): Promise<Session[]> {
-    return paginatedFindMany<Session, SessionFindManyArgs>(
-      (args) => this.prisma.session.findMany(args),
-      { ...options, where, include: this.includeCount },
+  ): Promise<SessionWithCount[]> {
+    return paginatedFindMany<SessionWithCount>(
+      () =>
+        this.prisma.session.findMany({
+          ...buildPaginationArgs<SessionFindManyArgs>(options),
+          where,
+          include: SESSION_INCLUDE_COUNT,
+        }),
+      options?.direction,
     );
   }
 
-  async getSession(where: SessionWhereUniqueInput): Promise<Session | null> {
+  async getSession(
+    where: SessionWhereUniqueInput,
+  ): Promise<SessionWithCount | null> {
     return await this.prisma.session.findUnique({
       where,
-      include: this.includeCount,
+      include: SESSION_INCLUDE_COUNT,
     });
   }
 
-  async createSession(dto: CreateSessionDto): Promise<Session> {
+  async createSession(dto: CreateSessionDto): Promise<SessionWithCount> {
+    const { campaignId, ...data } = dto;
+
     return await this.prisma.session.create({
       data: {
-        title: dto.title,
-        description: dto.description,
+        ...data,
         campaign: {
-          connect: { id: dto.campaignId },
+          connect: { id: campaignId },
         },
       },
-      include: this.includeCount,
+      include: SESSION_INCLUDE_COUNT,
     });
   }
 
   async updateSession(
     where: SessionWhereUniqueInput,
     data: SessionUpdateInput,
-  ): Promise<Session> {
+  ): Promise<SessionWithCount> {
     return await this.update(where, data);
   }
 
   async updateSessionStatus(
     where: SessionWhereUniqueInput,
     data: SessionUpdateInput,
-  ): Promise<Session> {
+  ): Promise<SessionWithCount> {
     return await this.update(where, data);
   }
 
-  async startSession(where: SessionWhereUniqueInput): Promise<Session> {
+  async startSession(
+    where: SessionWhereUniqueInput,
+  ): Promise<SessionWithCount> {
     return await this.update(where, {
       status: SessionStatus.LIVE,
       startedAt: new Date(),
     });
   }
 
-  async endSession(where: SessionWhereUniqueInput): Promise<Session> {
+  async endSession(where: SessionWhereUniqueInput): Promise<SessionWithCount> {
     return await this.update(where, {
       status: SessionStatus.ENDED,
       endedAt: new Date(),
@@ -135,11 +163,11 @@ export class SessionRepository {
   private async update(
     where: SessionWhereUniqueInput,
     data: SessionUpdateInput,
-  ): Promise<Session> {
+  ): Promise<SessionWithCount> {
     return await this.prisma.session.update({
       where,
       data,
-      include: this.includeCount,
+      include: SESSION_INCLUDE_COUNT,
     });
   }
 }

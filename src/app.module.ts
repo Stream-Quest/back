@@ -10,6 +10,7 @@ import { WeatherModule } from './weather/weather.module';
 import { LocationModule } from './location/location.module';
 import { PlayerCharacterModule } from './player-character/player-character.module';
 import { EventTypeModule } from './event-type/event-type.module';
+import { EventModule } from './event/event.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { EventTypeModule } from './event-type/event-type.module';
     LocationModule,
     PlayerCharacterModule,
     EventTypeModule,
+    EventModule,
   ],
   controllers: [AppController],
   providers: [AppService],

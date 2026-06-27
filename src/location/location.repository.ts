@@ -8,7 +8,10 @@ import {
 } from '../generated/prisma/models';
 import { Location } from '../generated/prisma/client';
 import { CreateLocationDto } from './dto/create-location.dto';
-import { paginatedFindMany } from '../helpers/pagination.helper';
+import {
+  buildPaginationArgs,
+  paginatedFindMany,
+} from '../helpers/pagination.helper';
 
 @Injectable()
 export class LocationRepository {
@@ -20,9 +23,12 @@ export class LocationRepository {
     direction?: 'forward' | 'backward';
     orderBy?: LocationOrderByWithRelationInput;
   }): Promise<Location[]> {
-    return paginatedFindMany<Location, LocationFindManyArgs>(
-      (args) => this.prisma.location.findMany(args),
-      options,
+    return paginatedFindMany<Location>(
+      () =>
+        this.prisma.location.findMany(
+          buildPaginationArgs<LocationFindManyArgs>(options),
+        ),
+      options?.direction,
     );
   }
 

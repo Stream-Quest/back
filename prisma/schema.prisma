@@ -283,7 +283,7 @@ model Rule {
   createdAt               DateTime            @default(now())
   updatedAt               DateTime            @updatedAt
   
-  event                   Event               @relation(fields: [eventId], references: [id])
+  event                   Event               @relation(fields: [eventId], references: [id], onDelete: Cascade)
   eventId                 String
 
   @@index([eventId])
@@ -297,7 +297,7 @@ model Resolution {
   createdAt               DateTime            @default(now())
   updatedAt               DateTime            @updatedAt
 
-  event                   Event               @relation(fields: [eventId], references: [id])
+  event                   Event               @relation(fields: [eventId], references: [id], onDelete: Cascade)
   eventId                 String
   conditionGroups         ConditionGroup[]
   sessionEventResolutions SessionEventResolution[]
@@ -310,9 +310,9 @@ model ConditionGroup {
   createdAt               DateTime            @default(now())
   updatedAt               DateTime            @updatedAt
 
-  resolution              Resolution?         @relation(fields: [resolutionId], references: [id])
+  resolution              Resolution?         @relation(fields: [resolutionId], references: [id], onDelete: Cascade)
   resolutionId            String?
-  parentGroup             ConditionGroup?     @relation("ConditionGroupChildren", fields: [parentGroupId], references: [id])
+  parentGroup             ConditionGroup?     @relation("ConditionGroupChildren", fields: [parentGroupId], references: [id], onDelete: Cascade)
   parentGroupId           String?
   children                ConditionGroup[]    @relation("ConditionGroupChildren")
   conditions              Condition[]
@@ -325,7 +325,7 @@ model Condition {
   createdAt               DateTime            @default(now())
   updatedAt               DateTime            @updatedAt
 
-  conditionGroup          ConditionGroup      @relation(fields: [conditionGroupId], references: [id])
+  conditionGroup          ConditionGroup      @relation(fields: [conditionGroupId], references: [id], onDelete: Cascade)
   conditionGroupId        String
 }
 
