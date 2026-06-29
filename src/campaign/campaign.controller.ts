@@ -17,12 +17,17 @@ import { CampaignService } from './campaign.service';
 import { CampaignResponseDto } from './dto/campaign-response.dto';
 import { CampaignQueryDto } from './dto/campaign-query.dto';
 import {
+  CreateCampaignEventRoute,
   CreateCampaignRoute,
+  DeleteCampaignEventRoute,
   DeleteCampaignFromTrashRoute,
   GetCampaignDetailsRoute,
+  GetCampaignEventDetailsRoute,
+  GetCampaignEventListRoute,
   GetCampaignListRoute,
   RestoreSoftRemovedCampaignRoute,
   SoftRemoveCampaignRoute,
+  UpdateCampaignEventRoute,
   UpdateCampaignKarmaRoute,
   UpdateCampaignRoute,
   UpdateCampaignStatusRoute,
@@ -30,13 +35,25 @@ import {
 import type { JwtPayloadInterface } from '../auth/interface/auth.interface';
 import { UserContext } from '../decorators/user.decorator';
 import { CampaignContext } from './decorator/campaign.decorator';
-import type { Campaign } from '../generated/prisma/client';
+import type { Campaign, CampaignEvent } from '../generated/prisma/client';
 import { PaginationResponseDto } from '../dto/pagination-response.dto';
+import { CampaignEventQueryDto } from './dto/event/campaign-event-query.dto';
+import { CreateCampaignEventDto } from './dto/event/create-campaign-event.dto';
+import { UpdateCampaignEventDto } from './dto/event/update-campaign-event.dto';
+import {
+  CampaignEventResponseDto,
+  DetailedCampaignEventResponseDto,
+} from './dto/event/campaign-event-response.dto';
+import { CampaignEventService } from './campaign-event.service';
+import { CampaignEventContext } from './decorator/campaign-event.decorator';
 
 @ApiTags('Campaign')
 @Controller('campaign')
 export class CampaignController {
-  constructor(private readonly campaignService: CampaignService) {}
+  constructor(
+    private readonly campaignService: CampaignService,
+    private readonly campaignEventService: CampaignEventService,
+  ) {}
 
   @Get('')
   @GetCampaignListRoute("Get user's campaigns")
@@ -114,5 +131,57 @@ export class CampaignController {
     @CampaignContext() campaign: Campaign,
   ): Promise<CampaignResponseDto> {
     return this.campaignService.deleteCampaign(campaign);
+  }
+
+  @Get(':id/event')
+  @GetCampaignEventListRoute("Get a list of Campaign's events")
+  async getCampaignEventList(
+    @Param('id') campaignId: string,
+    @Query() queryDto: CampaignEventQueryDto,
+  ): Promise<PaginationResponseDto<CampaignEventResponseDto>> {
+    return await this.campaignEventService.getCampaignEventList(
+      campaignId,
+      queryDto,
+    );
+  }
+
+  @Get(':id/event/:campaignEventId')
+  @GetCampaignEventDetailsRoute("Get the details of a Campaign's event")
+  async getCampaignEvent(
+    @Param('campaignEventId') campaignEventId: string,
+  ): Promise<DetailedCampaignEventResponseDto> {
+    return await this.campaignEventService.getCampaignEvent(campaignEventId);
+  }
+
+  @Post(':id/event')
+  @CreateCampaignEventRoute('Create a Campaign event')
+  async createCampaignEvent(
+    @Param('id') campaignId: string,
+    @Body() createDto: CreateCampaignEventDto,
+  ): Promise<CampaignEventResponseDto> {
+    return await this.campaignEventService.createCampaignEvent(
+      createDto,
+      campaignId,
+    );
+  }
+
+  @Patch(':id/event/:campaignEventId')
+  @UpdateCampaignEventRoute("Update a Campaign's event")
+  async updateCampaignEvent(
+    @Body() updateDto: UpdateCampaignEventDto,
+    @CampaignEventContext() campaignEvent: CampaignEvent,
+  ) {
+    return await this.campaignEventService.updateCampaignEvent(
+      updateDto,
+      campaignEvent,
+    );
+  }
+
+  @Delete(':id/event/:campaignEventId')
+  @DeleteCampaignEventRoute("Delete a Campaign's event")
+  async deleteCampaignEvent(
+    @CampaignEventContext() campaignEvent: CampaignEvent,
+  ): Promise<CampaignEvent> {
+    return await this.campaignEventService.deleteCampaignEvent(campaignEvent);
   }
 }

@@ -332,6 +332,8 @@ model Condition {
 model CampaignEvent {
   id                      String              @id @default(uuid())
   isActive                Boolean             @default(true)
+  createdAt               DateTime            @default(now())
+  updatedAt               DateTime            @updatedAt
 
   campaign                Campaign            @relation(fields: [campaignId], references: [id])
   campaignId              String
@@ -347,6 +349,8 @@ model CampaignThresholdEvent {
   id                      String              @id @default(uuid())
   thresholdType           ThresholdType
   resolutionMode          ResolutionMode      @default(MJ_CHOICE)
+  createdAt               DateTime            @default(now())
+  updatedAt               DateTime            @updatedAt
 
   campaign                Campaign            @relation(fields: [campaignId], references: [id])
   campaignId              String
@@ -360,6 +364,8 @@ model SessionEvent {
   finalMessage            String?
   triggeredAt             DateTime
   resolvedAt              DateTime?
+  createdAt               DateTime            @default(now())
+  updatedAt               DateTime            @updatedAt
   
   session                 Session             @relation(fields: [sessionId], references: [id])
   sessionId               String
@@ -376,6 +382,8 @@ model SessionEvent {
 
 model SessionEventResolution {
   id                      String              @id @default(uuid())
+  createdAt               DateTime            @default(now())
+  updatedAt               DateTime            @updatedAt
 
   sessionEvent            SessionEvent        @relation(fields: [sessionEventId], references: [id])
   sessionEventId          String
@@ -390,6 +398,8 @@ model ViewerInteraction {
   triggerType             TriggerType
   value                   Int?
   interactedAt            DateTime
+  createdAt               DateTime            @default(now())
+  updatedAt               DateTime            @updatedAt
   
   sessionEvent            SessionEvent        @relation(fields: [sessionEventId], references: [id])
   sessionEventId          String
