@@ -76,7 +76,6 @@ enum ResolutionMode {
 enum SessionEventStatus {
   PENDING
   VALIDATED
-  MODIFIED
   REJECTED
 }
 

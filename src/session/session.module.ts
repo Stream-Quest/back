@@ -6,10 +6,23 @@ import { SessionService } from './session.service';
 import { SessionRepository } from './session.repository';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { SessionGateway } from './gateway/session.gateway';
+import { SessionEventService } from './session-event.service';
+import { SessionEventRepository } from './session-event.repository';
+import { SessionEventGuard } from './guard/session-event.guard';
+import { EventRepository } from '../event/event.repository';
 
 @Module({
   imports: [PrismaModule, AuthModule],
   controllers: [SessionController],
-  providers: [SessionService, SessionRepository, JwtAuthGuard, SessionGateway],
+  providers: [
+    SessionService,
+    SessionRepository,
+    SessionEventService,
+    SessionEventRepository,
+    SessionEventGuard,
+    EventRepository,
+    JwtAuthGuard,
+    SessionGateway,
+  ],
 })
 export class SessionModule {}

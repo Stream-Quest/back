@@ -8,6 +8,7 @@ import {
   Resolution,
   Rule,
   Session,
+  SessionEvent,
   Weather,
 } from '../generated/prisma/client';
 import { JwtPayloadInterface } from '../auth/interface/auth.interface';
@@ -55,4 +56,8 @@ export interface AuthenticatedRequestWithResolution extends AuthenticatedRequest
 
 export interface AuthenticatedRequestWithCampaignEvent extends AuthenticatedRequest {
   campaignEvent: CampaignEvent;
+}
+
+export interface AuthenticatedRequestWithSessionEvent extends AuthenticatedRequest {
+  sessionEvent: SessionEvent;
 }

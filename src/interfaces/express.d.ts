@@ -8,6 +8,7 @@ import {
   Resolution,
   Rule,
   Session,
+  SessionEvent,
   Weather,
 } from '../generated/prisma/client';
 import { JwtPayloadInterface } from '../auth/interface/auth.interface';
@@ -26,6 +27,7 @@ declare global {
       rule?: Rule;
       resolution?: Resolution;
       campaignEvent?: CampaignEvent;
+      sessionEvent?: SessionEvent;
     }
   }
 }
