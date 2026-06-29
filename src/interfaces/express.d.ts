@@ -1,5 +1,6 @@
 import {
   Campaign,
+  CampaignEvent,
   Event,
   EventType,
   Location,
@@ -24,6 +25,7 @@ declare global {
       event?: Event;
       rule?: Rule;
       resolution?: Resolution;
+      campaignEvent?: CampaignEvent;
     }
   }
 }

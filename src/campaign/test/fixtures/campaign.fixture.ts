@@ -1,9 +1,7 @@
 import { Campaign, CampaignStatus } from '../../../generated/prisma/client';
 import { JwtPayloadInterface } from '../../../auth/interface/auth.interface';
 
-export const createMockCampaign = (
-  overrides: Partial<Campaign> = {},
-): Campaign => ({
+export const createMockCampaign = (overrides: Partial<Campaign> = {}) => ({
   id: 'campaign-123',
   title: 'Test Campaign',
   description: 'A test campaign',
@@ -16,6 +14,7 @@ export const createMockCampaign = (
   updatedAt: new Date('2024-01-01'),
   deletedAt: null,
   gameMasterId: 'user-123',
+  _count: { sessions: 0, campaignEvents: 0 }, // ← ajouter
   ...overrides,
 });
 

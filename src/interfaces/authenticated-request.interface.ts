@@ -1,5 +1,6 @@
 import {
   Campaign,
+  CampaignEvent,
   Event,
   EventType,
   Location,
@@ -50,4 +51,8 @@ export interface AuthenticatedRequestWithRule extends AuthenticatedRequest {
 
 export interface AuthenticatedRequestWithResolution extends AuthenticatedRequest {
   resolution: Resolution;
+}
+
+export interface AuthenticatedRequestWithCampaignEvent extends AuthenticatedRequest {
+  campaignEvent: CampaignEvent;
 }
