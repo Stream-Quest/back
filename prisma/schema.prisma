@@ -256,6 +256,7 @@ model Event {
   karmaValue              Int                 @default(0)
   isTemplate              Boolean             @default(false)
   isPublic                Boolean             @default(false)
+  resolutionMode          ResolutionMode      @default(MJ_CHOICE)
   createdAt               DateTime            @default(now())
   updatedAt               DateTime            @updatedAt
   
@@ -347,7 +348,6 @@ model CampaignEvent {
 model CampaignThresholdEvent {
   id                      String              @id @default(uuid())
   thresholdType           ThresholdType
-  resolutionMode          ResolutionMode      @default(MJ_CHOICE)
   createdAt               DateTime            @default(now())
   updatedAt               DateTime            @updatedAt
 
@@ -355,6 +355,10 @@ model CampaignThresholdEvent {
   campaignId              String
   event                   Event               @relation(fields: [eventId], references: [id])
   eventId                 String
+  sessionEvents           SessionEvent[]
+
+  @@index([campaignId])
+  @@index([eventId])
 }
 
 model SessionEvent {
@@ -372,11 +376,14 @@ model SessionEvent {
   eventId                 String
   chosenResolution        Resolution?         @relation("SessionEventResolutionChosen", fields: [chosenResolutionId], references: [id])
   chosenResolutionId      String?
+  thresholdEvent          CampaignThresholdEvent? @relation(fields: [thresholdEventId], references: [id])
+  thresholdEventId        String?
   sessionEventResolutions SessionEventResolution[]
   viewerInteractions      ViewerInteraction[]
 
   @@index([sessionId])
   @@index([status])  
+  @@index([thresholdEventId])
 }
 
 model SessionEventResolution {

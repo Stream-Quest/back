@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ResolutionResponseDto } from './resolution/resolution-response.dto';
 import { RuleResponseDto } from './rule/rule-response.dto';
+import { ResolutionMode } from '../../generated/prisma/enums';
 
 export class EventCountDto {
   @ApiProperty({ example: 2, description: 'Number of rules' })
@@ -40,6 +41,13 @@ export class EventResponseDto {
     description: 'Is this event public ?',
   })
   isPublic: boolean;
+
+  @ApiProperty({
+    enum: ResolutionMode,
+    example: ResolutionMode.MJ_CHOICE,
+    description: 'How the resolution is chosen when this event triggers',
+  })
+  resolutionMode: ResolutionMode;
 
   @ApiProperty({
     example: '550e8400-e29b-41d4-a716-446655440000',

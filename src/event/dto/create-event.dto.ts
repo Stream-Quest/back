@@ -1,6 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsBoolean,
+  IsEnum,
   IsInt,
   IsNotEmpty,
   IsOptional,
@@ -8,6 +9,7 @@ import {
   IsUUID,
   MaxLength,
 } from 'class-validator';
+import { ResolutionMode } from '../../generated/prisma/enums';
 
 export class CreateEventDto {
   @ApiProperty({
@@ -42,6 +44,15 @@ export class CreateEventDto {
   @IsBoolean()
   @IsOptional()
   isPublic?: boolean = false;
+
+  @ApiPropertyOptional({
+    enum: ResolutionMode,
+    example: ResolutionMode.MJ_CHOICE,
+    description: 'How the resolution is chosen when this event triggers',
+  })
+  @IsEnum(ResolutionMode)
+  @IsOptional()
+  resolutionMode?: ResolutionMode = ResolutionMode.MJ_CHOICE;
 
   @ApiProperty({
     example: '550e8400-e29b-41d4-a716-446655440000',

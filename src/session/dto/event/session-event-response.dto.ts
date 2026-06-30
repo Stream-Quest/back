@@ -86,6 +86,13 @@ export class SessionEventResponseDto {
   })
   chosenResolutionId: string | null;
 
+  @ApiPropertyOptional({
+    example: '550e8400-e29b-41d4-a716-446655440000',
+    description:
+      'Threshold event UUID if this session event was triggered by a karma threshold being reached',
+  })
+  thresholdEventId: string | null;
+
   @ApiProperty({
     example: '2026-06-29T15:00:00.000Z',
     description: 'Creation date',

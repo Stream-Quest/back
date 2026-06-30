@@ -12,6 +12,7 @@ import {
 } from '../../../generated/prisma/enums';
 import { EventWithCount, EventWithDetails } from '../../event.repository';
 import { ResolutionWithConditions } from '../../resolution.repository';
+import { ResolutionMode } from '../../../generated/prisma/client';
 
 export const createMockEvent = (overrides: Partial<Event> = {}): Event => ({
   id: 'event-123',
@@ -19,6 +20,7 @@ export const createMockEvent = (overrides: Partial<Event> = {}): Event => ({
   karmaValue: -10,
   isTemplate: false,
   isPublic: false,
+  resolutionMode: ResolutionMode.MJ_CHOICE, // ← ajouter
   eventTypeId: 'event-type-123',
   gameMasterId: 'user-123',
   createdAt: new Date('2024-01-01'),

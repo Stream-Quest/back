@@ -16,6 +16,7 @@ export const createMockSessionEvent = (
   sessionId: 'session-123',
   eventId: 'event-123',
   chosenResolutionId: null,
+  thresholdEventId: null, // ← ajouter
   createdAt: new Date('2024-01-01'),
   updatedAt: new Date('2024-01-01'),
   ...overrides,
