@@ -196,8 +196,8 @@ model KarmaEvent {
   reason                  String?
   occurredAt              DateTime
 
-  session                 Session             @relation(fields: [sessionId], references: [id])
-  sessionId               String
+  session                 Session?            @relation(fields: [sessionId], references: [id])
+  sessionId               String?
   campaign                Campaign            @relation(fields: [campaignId], references: [id])
   campaignId              String
 

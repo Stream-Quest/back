@@ -8,9 +8,10 @@ import { CampaignRepository } from './campaign.repository';
 import { CampaignEventService } from './campaign-event.service';
 import { CampaignEventRepository } from './campaign-event.repository';
 import { EventRepository } from '../event/event.repository';
+import { KarmaEventModule } from './karma-event.module';
 
 @Module({
-  imports: [PrismaModule, AuthModule],
+  imports: [PrismaModule, KarmaEventModule, AuthModule],
   controllers: [CampaignController],
   providers: [
     CampaignService,

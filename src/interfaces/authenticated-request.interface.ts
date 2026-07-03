@@ -1,8 +1,10 @@
 import {
   Campaign,
   CampaignEvent,
+  CampaignThresholdEvent,
   Event,
   EventType,
+  KarmaEvent,
   Location,
   PlayerCharacter,
   Resolution,
@@ -60,4 +62,12 @@ export interface AuthenticatedRequestWithCampaignEvent extends AuthenticatedRequ
 
 export interface AuthenticatedRequestWithSessionEvent extends AuthenticatedRequest {
   sessionEvent: SessionEvent;
+}
+
+export interface AuthenticatedRequestWithKarmaEvent extends AuthenticatedRequest {
+  karmaEvent: KarmaEvent;
+}
+
+export interface AuthenticatedRequestWithThresholdEvent extends AuthenticatedRequest {
+  thresholdEvent: CampaignThresholdEvent;
 }

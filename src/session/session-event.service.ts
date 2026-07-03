@@ -17,6 +17,8 @@ import { UpdateSessionEventDto } from './dto/event/update-session-event.dto';
 import { SessionEvent } from '../generated/prisma/client';
 import { EventRepository } from '../event/event.repository';
 import { RedisService } from '../redis/redis.service';
+import { SessionRepository } from './session.repository';
+import { KarmaEventService } from '../campaign/karma-event.service';
 
 @Injectable()
 export class SessionEventService {
@@ -24,6 +26,8 @@ export class SessionEventService {
     private readonly repository: SessionEventRepository,
     private readonly eventRepository: EventRepository,
     private readonly redisService: RedisService,
+    private readonly karmaEventService: KarmaEventService,
+    private readonly sessionRepository: SessionRepository,
   ) {}
 
   async getSessionEventList(
@@ -109,6 +113,25 @@ export class SessionEventService {
       { id: sessionEvent.id },
       dto,
     );
+
+    const event = await this.eventRepository.getEvent({
+      id: validated.eventId,
+    });
+
+    if (event && event.karmaValue !== 0) {
+      const session = await this.sessionRepository.getSession({
+        id: sessionEvent.sessionId,
+      });
+
+      if (session) {
+        await this.karmaEventService.applyKarma({
+          campaignId: session.campaignId,
+          value: event.karmaValue,
+          reason: event.name,
+          sessionId: sessionEvent.sessionId,
+        });
+      }
+    }
 
     await this.redisService.publish(
       `session:${sessionEvent.sessionId}:event:validated`,

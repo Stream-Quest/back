@@ -1,8 +1,10 @@
 import {
   Campaign,
   CampaignEvent,
+  CampaignThresholdEvent,
   Event,
   EventType,
+  KarmaEvent,
   Location,
   PlayerCharacter,
   Resolution,
@@ -28,6 +30,8 @@ declare global {
       resolution?: Resolution;
       campaignEvent?: CampaignEvent;
       sessionEvent?: SessionEvent;
+      karmaEvent?: KarmaEvent;
+      thresholdEvent?: CampaignThresholdEvent;
     }
   }
 }
