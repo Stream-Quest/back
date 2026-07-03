@@ -13,6 +13,9 @@ import { createMockSessionEventRepository } from './mocks/session-event.reposito
 import { createMockEventRepository } from '../../event/test/mocks/event.repository.mock';
 import { createMockRedisService } from './mocks/session.service.mock';
 import { createMockEventWithDetails } from '../../event/test/fixtures/event.fixture';
+import { SessionRepository } from '../session.repository';
+import { createMockSessionRepository } from './mocks/session.repository.mock';
+import { KarmaEventService } from '../../campaign/karma-event.service';
 
 describe('SessionEventService', () => {
   let service: SessionEventService;
@@ -33,6 +36,18 @@ describe('SessionEventService', () => {
         { provide: SessionEventRepository, useValue: mockRepository },
         { provide: EventRepository, useValue: mockEventRepository },
         { provide: RedisService, useValue: mockRedisService },
+        {
+          provide: KarmaEventService,
+          useValue: {
+            applyKarma: jest
+              .fn()
+              .mockResolvedValue({ karmaEvent: {}, newKarmaValue: 0 }),
+          },
+        },
+        {
+          provide: SessionRepository,
+          useValue: createMockSessionRepository(),
+        },
       ],
     }).compile();
 

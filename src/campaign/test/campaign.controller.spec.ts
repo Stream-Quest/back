@@ -242,18 +242,28 @@ describe('CampaignController', () => {
 
   describe('updateCampaignKarma', () => {
     it('should update campaign karma', async () => {
-      const karmaDto = { karmaValue: 10 };
-      const updatedCampaign = createMockCampaign({ karmaValue: 10 });
+      const karmaDto = { karmaValue: 10, reason: 'Manual adjustment' };
+      const mockResponse = {
+        newKarmaValue: 10,
+        karmaEvent: {
+          id: 'karma-event-123',
+          value: 10,
+          reason: 'Manual adjustment',
+          occurredAt: new Date(),
+          campaignId: 'campaign-123',
+          sessionId: null,
+        },
+      };
       jest
         .spyOn(service, 'updateCampaignKarma')
-        .mockResolvedValue(updatedCampaign);
+        .mockResolvedValue(mockResponse);
 
       const result = await controller.updateCampaignKarma(
         karmaDto,
         mockCampaign,
       );
 
-      expect(result).toEqual(updatedCampaign);
+      expect(result).toEqual(mockResponse);
       expect(service.updateCampaignKarma).toHaveBeenCalledWith(
         karmaDto,
         mockCampaign,

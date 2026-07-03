@@ -9,10 +9,12 @@ import {
   createMockUser,
 } from './fixtures/campaign.fixture';
 import { createMockCampaignRepository } from './mocks/campaign.repository.mock';
+import { KarmaEventService } from '../karma-event.service';
 
 describe('CampaignService', () => {
   let service: CampaignService;
   let repository: CampaignRepository;
+  let karmaService: { applyKarma: jest.Mock };
 
   const mockUser = createMockUser();
   const mockCampaign = createMockCampaign();
@@ -22,15 +24,21 @@ describe('CampaignService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CampaignService,
+        { provide: CampaignRepository, useValue: mockRepository },
         {
-          provide: CampaignRepository,
-          useValue: mockRepository,
+          provide: KarmaEventService,
+          useValue: {
+            applyKarma: jest
+              .fn()
+              .mockResolvedValue({ karmaEvent: {}, newKarmaValue: 0 }),
+          },
         },
       ],
     }).compile();
 
     service = module.get(CampaignService);
     repository = module.get(CampaignRepository);
+    karmaService = module.get(KarmaEventService);
 
     jest.clearAllMocks();
   });
@@ -249,20 +257,34 @@ describe('CampaignService', () => {
 
   describe('updateCampaignKarma', () => {
     it('should update campaign karma', async () => {
-      const updatedCampaign = createMockCampaign({ karmaValue: 10 });
-      jest
-        .spyOn(repository, 'updateCampaignKarma')
-        .mockResolvedValue(updatedCampaign);
+      const mockKarmaEvent = {
+        id: 'karma-event-123',
+        value: 10,
+        reason: 'Manual adjustment',
+        occurredAt: new Date(),
+        campaignId: 'campaign-123',
+        sessionId: null,
+      };
 
-      const dto = { karmaValue: 10 };
+      // Le mock du karmaService doit retourner le bon objet
+      jest.spyOn(karmaService, 'applyKarma').mockResolvedValue({
+        karmaEvent: mockKarmaEvent,
+        newKarmaValue: 10,
+      });
+
+      const dto = { karmaValue: 10, reason: 'Manual adjustment' };
 
       const result = await service.updateCampaignKarma(dto, mockCampaign);
 
-      expect(result).toEqual(updatedCampaign);
-      expect(repository.updateCampaignKarma).toHaveBeenCalledWith(
-        { id: 'campaign-123' },
-        dto,
-      );
+      expect(result).toEqual({
+        karmaEvent: mockKarmaEvent,
+        newKarmaValue: 10,
+      });
+      expect(karmaService.applyKarma).toHaveBeenCalledWith({
+        campaignId: mockCampaign.id,
+        value: dto.karmaValue,
+        reason: 'Manual adjustment',
+      });
     });
   });
 

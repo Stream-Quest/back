@@ -10,9 +10,10 @@ import { SessionEventService } from './session-event.service';
 import { SessionEventRepository } from './session-event.repository';
 import { SessionEventGuard } from './guard/session-event.guard';
 import { EventRepository } from '../event/event.repository';
+import { KarmaEventModule } from '../campaign/karma-event.module';
 
 @Module({
-  imports: [PrismaModule, AuthModule],
+  imports: [PrismaModule, KarmaEventModule, AuthModule],
   controllers: [SessionController],
   providers: [
     SessionService,

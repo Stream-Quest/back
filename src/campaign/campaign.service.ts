@@ -15,10 +15,15 @@ import { PaginationResponseDto } from '../dto/pagination-response.dto';
 import { CampaignWhereInput } from '../generated/prisma/models';
 import { Campaign } from '../generated/prisma/client';
 import { FilterDeletionStatus } from '../enum/filter-status.enum';
+import { KarmaEventService } from './karma-event.service';
+import { UpdateKarmaResponseDto } from './dto/update-karma-response.dto';
 
 @Injectable()
 export class CampaignService {
-  constructor(private readonly repository: CampaignRepository) {}
+  constructor(
+    private readonly repository: CampaignRepository,
+    private readonly karmaEventService: KarmaEventService,
+  ) {}
 
   async getCampaignList(
     user: JwtPayloadInterface,
@@ -126,11 +131,18 @@ export class CampaignService {
   async updateCampaignKarma(
     dto: UpdateKarmaDto,
     campaign: Campaign,
-  ): Promise<CampaignResponseDto> {
-    const campaignId: string = campaign.id;
-    const whereClause = { id: campaignId };
+  ): Promise<UpdateKarmaResponseDto> {
+    const { karmaEvent, newKarmaValue } =
+      await this.karmaEventService.applyKarma({
+        campaignId: campaign.id,
+        value: dto.karmaValue,
+        reason: dto.reason ?? 'Manual adjustment',
+      });
 
-    return this.repository.updateCampaignKarma(whereClause, dto);
+    return {
+      newKarmaValue,
+      karmaEvent,
+    };
   }
 
   async softRemoveCampaign(campaign: Campaign): Promise<CampaignResponseDto> {

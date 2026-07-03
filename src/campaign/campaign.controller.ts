@@ -46,6 +46,7 @@ import {
 } from './dto/event/campaign-event-response.dto';
 import { CampaignEventService } from './campaign-event.service';
 import { CampaignEventContext } from './decorator/campaign-event.decorator';
+import { UpdateKarmaResponseDto } from './dto/update-karma-response.dto';
 
 @ApiTags('Campaign')
 @Controller('campaign')
@@ -105,7 +106,7 @@ export class CampaignController {
   async updateCampaignKarma(
     @Body() updateDto: UpdateKarmaDto,
     @CampaignContext() campaign: Campaign,
-  ): Promise<CampaignResponseDto> {
+  ): Promise<UpdateKarmaResponseDto> {
     return this.campaignService.updateCampaignKarma(updateDto, campaign);
   }
 
