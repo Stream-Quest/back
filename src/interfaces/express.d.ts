@@ -14,7 +14,7 @@ import {
   TwitchEventMapping,
   Weather,
 } from '../generated/prisma/client';
-import { JwtPayloadInterface } from '../auth/interface/auth.interface';
+import { JwtPayloadInterface } from '../modules/auth/interface/auth.interface';
 
 declare global {
   namespace Express {
