@@ -11,6 +11,7 @@ import {
   Rule,
   Session,
   SessionEvent,
+  TwitchEventMapping,
   Weather,
 } from '../generated/prisma/client';
 import { JwtPayloadInterface } from '../auth/interface/auth.interface';
@@ -32,6 +33,7 @@ declare global {
       sessionEvent?: SessionEvent;
       karmaEvent?: KarmaEvent;
       thresholdEvent?: CampaignThresholdEvent;
+      twitchMapping?: TwitchEventMapping;
     }
   }
 }

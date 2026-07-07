@@ -38,10 +38,15 @@ enum PlayerStatus {
 }
 
 enum TriggerType {
-  CHAT_COMMAND
-  SUB
+  SUB_TIER1
+  SUB_TIER2
+  SUB_TIER3
+  SUB_PRIME
+  GIFT_SUB
   BITS
   RAID
+  FOLLOW
+  CHAT_COMMAND
 }
 
 enum Operator {
@@ -94,6 +99,7 @@ model User {
   campaigns               Campaign[]
   eventTypes              EventType[]
   events                  Event[]
+  sessionStreamers        SessionStreamer[]
 }
 
 model Campaign {
@@ -117,6 +123,7 @@ model Campaign {
   campaignEvents          CampaignEvent[]
   thresholdEvents         CampaignThresholdEvent[]
   viewerInteractions      ViewerInteraction[]
+  twitchEventMappings     TwitchEventMapping[]
 
   @@index([gameMasterId])
   @@index([status])
@@ -140,6 +147,7 @@ model Session {
   sessionEvents           SessionEvent[]
   sessionPlayers          SessionPlayerCharacter[]
   viewerInteractions      ViewerInteraction[]
+  sessionStreamers        SessionStreamer[]
 
   @@index([campaignId])
   @@index([status])
@@ -269,6 +277,7 @@ model Event {
   campaignEvents          CampaignEvent[]
   thresholdEvents         CampaignThresholdEvent[]
   sessionEvents           SessionEvent[]
+  twitchEventMappings     TwitchEventMapping[]
 
   @@index([gameMasterId])
   @@index([eventTypeId])
@@ -418,4 +427,33 @@ model ViewerInteraction {
   @@index([sessionId])
   @@index([twitchUserId])
   @@index([interactedAt]) 
+}
+
+model TwitchEventMapping {
+  id                      String              @id @default(uuid())
+  twitchEventType         TriggerType
+  isActive                Boolean             @default(true)
+  createdAt               DateTime            @default(now())
+  updatedAt               DateTime            @updatedAt
+
+  campaign                Campaign            @relation(fields: [campaignId], references: [id])
+  campaignId              String
+  event                   Event               @relation(fields: [eventId], references: [id])
+  eventId                 String
+
+  @@index([campaignId, twitchEventType])
+  @@index([eventId])
+}
+
+model SessionStreamer {
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+
+  session     Session  @relation(fields: [sessionId], references: [id])
+  sessionId   String
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+
+  @@unique([sessionId, userId])
+  @@index([sessionId])
 }

@@ -7,7 +7,7 @@ import { PrismaExceptionFilter } from './filters/prisma-exception.filter';
 import { AllExceptionsFilter } from './filters/all-exceptions.filter';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { rawBody: true });
   app.use(cookieParser(process.env.COOKIE_SECRET));
 
   app.useGlobalFilters(new PrismaExceptionFilter(), new AllExceptionsFilter());
