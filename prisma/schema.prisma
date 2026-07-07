@@ -99,6 +99,7 @@ model User {
   campaigns               Campaign[]
   eventTypes              EventType[]
   events                  Event[]
+  sessionStreamers        SessionStreamer[]
 }
 
 model Campaign {
@@ -146,6 +147,7 @@ model Session {
   sessionEvents           SessionEvent[]
   sessionPlayers          SessionPlayerCharacter[]
   viewerInteractions      ViewerInteraction[]
+  sessionStreamers        SessionStreamer[]
 
   @@index([campaignId])
   @@index([status])
@@ -441,4 +443,17 @@ model TwitchEventMapping {
 
   @@index([campaignId, twitchEventType])
   @@index([eventId])
+}
+
+model SessionStreamer {
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+
+  session     Session  @relation(fields: [sessionId], references: [id])
+  sessionId   String
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+
+  @@unique([sessionId, userId])
+  @@index([sessionId])
 }

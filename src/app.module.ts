@@ -12,9 +12,26 @@ import { PlayerCharacterModule } from './player-character/player-character.modul
 import { EventTypeModule } from './event-type/event-type.module';
 import { EventModule } from './event/event.module';
 import { KarmaEventModule } from './campaign/karma-event.module';
+import { TwitchModule } from './twitch/twitch.module';
+import { TwitchMappingModule } from './twitch-mapping/twitch-mapping.module';
+import { ConfigModule } from '@nestjs/config';
+import * as Joi from 'joi';
 
+const required = Joi.string().required();
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      validationSchema: Joi.object({
+        TWITCH_CLIENT_ID: required,
+        TWITCH_CLIENT_SECRET: required,
+        TWITCH_WEBHOOK_SECRET: required,
+        TWITCH_WEBHOOK_CALLBACK_URL: required,
+        REDIS_HOST: required,
+        REDIS_PORT: required,
+        REDIS_PASSWORD: required,
+      }),
+    }),
     PrismaModule,
     AuthModule,
     CampaignModule,
@@ -26,6 +43,8 @@ import { KarmaEventModule } from './campaign/karma-event.module';
     EventTypeModule,
     EventModule,
     KarmaEventModule,
+    TwitchModule,
+    TwitchMappingModule,
   ],
   controllers: [AppController],
   providers: [AppService],
