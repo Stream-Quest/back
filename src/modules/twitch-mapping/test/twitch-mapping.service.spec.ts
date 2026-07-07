@@ -10,6 +10,7 @@ import {
 } from './fixtures/twitch-mapping.fixture';
 import { createMockEvent } from '../../../modules/event/test/fixtures/event.fixture';
 import { TriggerType } from '../../../generated/prisma/client';
+import { RedisService } from '../../../redis/redis.service';
 
 describe('TwitchMappingService', () => {
   let service: TwitchMappingService;
@@ -20,6 +21,9 @@ describe('TwitchMappingService', () => {
   const mockEventRepository = {
     getEvent: jest.fn().mockResolvedValue(createMockEvent()),
   };
+  const mockRedisService = {
+    publish: jest.fn().mockResolvedValue(undefined),
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -27,6 +31,7 @@ describe('TwitchMappingService', () => {
         TwitchMappingService,
         { provide: TwitchMappingRepository, useValue: mockRepository },
         { provide: EventRepository, useValue: mockEventRepository },
+        { provide: RedisService, useValue: mockRedisService },
       ],
     }).compile();
 

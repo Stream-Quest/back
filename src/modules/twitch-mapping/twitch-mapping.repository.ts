@@ -70,6 +70,8 @@ export class TwitchMappingRepository {
       data: {
         twitchEventType: dto.twitchEventType,
         isActive: dto.isActive ?? true,
+        threshold: dto.threshold ?? 1,
+        showProgress: dto.showProgress ?? true,
         campaign: { connect: { id: campaignId } },
         event: { connect: { id: dto.eventId } },
       },
@@ -85,6 +87,10 @@ export class TwitchMappingRepository {
       data: {
         ...(dto.twitchEventType && { twitchEventType: dto.twitchEventType }),
         ...(dto.isActive !== undefined && { isActive: dto.isActive }),
+        ...(dto.threshold !== undefined && { threshold: dto.threshold }),
+        ...(dto.showProgress !== undefined && {
+          showProgress: dto.showProgress,
+        }),
         ...(dto.eventId && { event: { connect: { id: dto.eventId } } }),
       },
     });
@@ -94,5 +100,19 @@ export class TwitchMappingRepository {
     where: TwitchEventMappingWhereUniqueInput,
   ): Promise<TwitchEventMapping> {
     return await this.prisma.twitchEventMapping.delete({ where });
+  }
+
+  async incrementCount(id: string): Promise<TwitchEventMapping> {
+    return await this.prisma.twitchEventMapping.update({
+      where: { id },
+      data: { currentCount: { increment: 1 } },
+    });
+  }
+
+  async resetCount(id: string): Promise<TwitchEventMapping> {
+    return await this.prisma.twitchEventMapping.update({
+      where: { id },
+      data: { currentCount: 0 },
+    });
   }
 }

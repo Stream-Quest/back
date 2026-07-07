@@ -433,6 +433,9 @@ model TwitchEventMapping {
   id                      String              @id @default(uuid())
   twitchEventType         TriggerType
   isActive                Boolean             @default(true)
+  threshold               Int                 @default(1)
+  currentCount            Int                 @default(0)
+  showProgress            Boolean             @default(true)
   createdAt               DateTime            @default(now())
   updatedAt               DateTime            @updatedAt
 

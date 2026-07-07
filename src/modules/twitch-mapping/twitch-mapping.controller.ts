@@ -24,6 +24,7 @@ import {
   CreateTwitchMappingRoute,
   UpdateTwitchMappingRoute,
   DeleteTwitchMappingRoute,
+  ResetTwitchMappingCountRoute,
 } from './decorator/twitch-mapping-routes.decorator';
 import { TwitchMappingContext } from './decorator/twitch-mapping.decorator';
 import type { TwitchEventMapping } from '../../generated/prisma/client';
@@ -74,5 +75,13 @@ export class TwitchMappingController {
     @TwitchMappingContext() mapping: TwitchEventMapping,
   ): Promise<TwitchEventMapping> {
     return await this.service.deleteTwitchMapping(mapping);
+  }
+
+  @Post(':id/twitch-mapping/:mappingId/reset-count')
+  @ResetTwitchMappingCountRoute('Reset the event counter of a twitch mapping')
+  async resetMappingCount(
+    @TwitchMappingContext() mapping: TwitchEventMapping,
+  ): Promise<TwitchMappingResponseDto> {
+    return await this.service.resetMappingCount(mapping);
   }
 }

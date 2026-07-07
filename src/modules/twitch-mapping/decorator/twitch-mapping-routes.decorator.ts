@@ -159,3 +159,21 @@ export function DeleteTwitchMappingRoute(summary: string) {
     }),
   );
 }
+
+export function ResetTwitchMappingCountRoute(summary: string) {
+  return applyDecorators(
+    UseGuards(CampaignGuard, TwitchMappingGuard),
+    ApiAuthRoute(summary, {
+      params: [CAMPAIGN_ID_PARAM, MAPPING_ID_PARAM],
+      responses: [
+        {
+          status: 201,
+          description: 'Resets the event counter of the twitch mapping',
+          type: TwitchMappingResponseDto,
+        },
+        ...CAMPAIGN_GUARD_EXCEPTIONS,
+        ...MAPPING_GUARD_EXCEPTIONS,
+      ],
+    }),
+  );
+}

@@ -15,12 +15,14 @@ import { EventRepository } from '../event/event.repository';
 import { PaginationResponseDto } from '../../dto/pagination-response.dto';
 import { TwitchEventMapping } from '../../generated/prisma/client';
 import { paginate } from '../../helpers/pagination.helper';
+import { RedisService } from '../../redis/redis.service';
 
 @Injectable()
 export class TwitchMappingService {
   constructor(
     private readonly repository: TwitchMappingRepository,
     private readonly eventRepository: EventRepository,
+    private readonly redisService: RedisService,
   ) {}
 
   async getTwitchMappingList(
@@ -93,5 +95,22 @@ export class TwitchMappingService {
     mapping: TwitchEventMapping,
   ): Promise<TwitchEventMapping> {
     return await this.repository.deleteTwitchMapping({ id: mapping.id });
+  }
+
+  async resetMappingCount(
+    mapping: TwitchEventMapping,
+  ): Promise<TwitchMappingResponseDto> {
+    const updated = await this.repository.resetCount(mapping.id);
+
+    await this.redisService.publish(
+      `campaign:${mapping.campaignId}:twitch-mapping:reset`,
+      {
+        mappingId: mapping.id,
+        twitchEventType: mapping.twitchEventType,
+        currentCount: 0,
+      },
+    );
+
+    return updated;
   }
 }

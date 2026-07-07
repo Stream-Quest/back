@@ -16,4 +16,10 @@ export const createMockTwitchMappingRepository = () => ({
   createTwitchMapping: jest.fn().mockResolvedValue(createMockTwitchMapping()),
   updateTwitchMapping: jest.fn().mockResolvedValue(createMockTwitchMapping()),
   deleteTwitchMapping: jest.fn().mockResolvedValue(createMockTwitchMapping()),
+  incrementCount: jest
+    .fn()
+    .mockResolvedValue(createMockTwitchMapping({ currentCount: 1 })),
+  resetCount: jest
+    .fn()
+    .mockResolvedValue(createMockTwitchMapping({ currentCount: 0 })),
 });

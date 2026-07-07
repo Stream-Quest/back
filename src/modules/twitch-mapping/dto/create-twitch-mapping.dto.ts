@@ -2,9 +2,11 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsBoolean,
   IsEnum,
+  IsInt,
   IsNotEmpty,
   IsOptional,
   IsUUID,
+  Min,
 } from 'class-validator';
 import { TriggerType } from '../../../generated/prisma/enums';
 
@@ -33,4 +35,22 @@ export class CreateTwitchMappingDto {
   @IsBoolean()
   @IsOptional()
   isActive?: boolean = true;
+
+  @ApiPropertyOptional({
+    example: 5,
+    description:
+      'Number of Twitch events required before triggering the game event',
+  })
+  @IsInt()
+  @Min(1)
+  @IsOptional()
+  threshold?: number = 1;
+
+  @ApiPropertyOptional({
+    example: true,
+    description: 'Whether to show progress on the OBS overlay',
+  })
+  @IsBoolean()
+  @IsOptional()
+  showProgress?: boolean = true;
 }

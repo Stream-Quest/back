@@ -23,6 +23,24 @@ export class TwitchMappingResponseDto {
   isActive: boolean;
 
   @ApiProperty({
+    example: 5,
+    description: 'Number of Twitch events required before triggering',
+  })
+  threshold: number;
+
+  @ApiProperty({
+    example: 3,
+    description: 'Current count of received Twitch events',
+  })
+  currentCount: number;
+
+  @ApiProperty({
+    example: true,
+    description: 'Whether to show progress on the OBS overlay',
+  })
+  showProgress: boolean;
+
+  @ApiProperty({
     example: '550e8400-e29b-41d4-a716-446655440000',
     description: 'Campaign UUID (foreign key)',
   })

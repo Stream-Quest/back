@@ -111,6 +111,8 @@ describe('TwitchMappingRepository', () => {
         data: {
           twitchEventType: TriggerType.SUB_TIER1,
           isActive: true,
+          threshold: 1,
+          showProgress: true,
           campaign: { connect: { id: 'campaign-123' } },
           event: { connect: { id: 'event-123' } },
         },

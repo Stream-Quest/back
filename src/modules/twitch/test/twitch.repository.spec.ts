@@ -8,7 +8,10 @@ import { TwitchMappingRepository } from '../../twitch-mapping/twitch-mapping.rep
 import { TriggerType } from '../../../generated/prisma/client';
 import * as crypto from 'crypto';
 import { createTwitchMappingPrismaMock } from '../../twitch-mapping/test/mocks/twitch-mapping.prisma.mock';
-import { createMockTwitchMappingWithEvent } from '../../twitch-mapping/test/fixtures/twitch-mapping.fixture';
+import {
+  createMockTwitchMapping,
+  createMockTwitchMappingWithEvent,
+} from '../../twitch-mapping/test/fixtures/twitch-mapping.fixture';
 
 describe('TwitchService', () => {
   let service: TwitchService;
@@ -25,6 +28,12 @@ describe('TwitchService', () => {
     getActiveMappingsByType: jest
       .fn()
       .mockResolvedValue([createMockTwitchMappingWithEvent()]),
+    incrementCount: jest
+      .fn()
+      .mockResolvedValue(createMockTwitchMapping({ currentCount: 1 })),
+    resetCount: jest
+      .fn()
+      .mockResolvedValue(createMockTwitchMapping({ currentCount: 0 })),
   };
 
   const mockConfigService = {

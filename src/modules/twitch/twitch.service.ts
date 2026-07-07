@@ -161,33 +161,54 @@ export class TwitchService {
       return;
     }
 
-    const mapping = mappings[Math.floor(Math.random() * mappings.length)];
+    for (const mapping of mappings) {
+      const updated = await this.twitchMappingRepository.incrementCount(
+        mapping.id,
+      );
 
-    const sessionEvent = await this.prisma.sessionEvent.create({
-      data: {
-        session: { connect: { id: session.id } },
-        event: { connect: { id: mapping.eventId } },
-        triggeredAt: new Date(),
-      },
-    });
+      if (mapping.showProgress) {
+        await this.redisService.publish(
+          `campaign:${session.campaignId}:twitch-mapping:progress`,
+          {
+            mappingId: mapping.id,
+            twitchEventType: triggerType,
+            currentCount: updated.currentCount,
+            threshold: mapping.threshold,
+            eventName: mapping.event.name,
+          },
+        );
+      }
 
-    await this.redisService.publish(`session:${session.id}:event:pending`, {
-      sessionEventId: sessionEvent.id,
-      eventId: sessionEvent.eventId,
-      triggeredAt: sessionEvent.triggeredAt,
-      triggerType,
-      twitchPayload: {
-        userId: event.user_id,
-        userLogin: event.user_login,
-        tier: event.tier,
-        bits: event.bits,
-        viewers: event.viewers,
-      },
-    });
+      if (updated.currentCount >= mapping.threshold) {
+        await this.twitchMappingRepository.resetCount(mapping.id);
 
-    this.logger.log(
-      `SessionEvent ${sessionEvent.id} created for trigger ${triggerType}`,
-    );
+        const sessionEvent = await this.prisma.sessionEvent.create({
+          data: {
+            session: { connect: { id: session.id } },
+            event: { connect: { id: mapping.eventId } },
+            triggeredAt: new Date(),
+          },
+        });
+
+        await this.redisService.publish(`session:${session.id}:event:pending`, {
+          sessionEventId: sessionEvent.id,
+          eventId: sessionEvent.eventId,
+          triggeredAt: sessionEvent.triggeredAt,
+          triggerType,
+          twitchPayload: {
+            userId: event.user_id,
+            userLogin: event.user_login,
+            tier: event.tier,
+            bits: event.bits,
+            viewers: event.viewers,
+          },
+        });
+
+        this.logger.log(
+          `SessionEvent ${sessionEvent.id} created for trigger ${triggerType}`,
+        );
+      }
+    }
   }
 
   private async findActiveSession(

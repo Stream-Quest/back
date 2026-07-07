@@ -8,9 +8,10 @@ import { AuthModule } from '../../auth/auth.module';
 import { JwtAuthGuard } from '../../auth/guard/jwt-auth.guard';
 import { CampaignGuard } from '../campaign/guard/campaign.guard';
 import { EventRepository } from '../event/event.repository';
+import { RedisModule } from '../../redis/redis.module';
 
 @Module({
-  imports: [PrismaModule, AuthModule],
+  imports: [PrismaModule, AuthModule, RedisModule],
   controllers: [TwitchMappingController],
   providers: [
     TwitchMappingService,
