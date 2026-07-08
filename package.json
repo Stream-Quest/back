@@ -18,7 +18,8 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "prepare": "husky"
+    "prepare": "husky",
+    "swagger:generate": "GENERATE_SWAGGER=true node -r dotenv/config dist/src/main.js"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",

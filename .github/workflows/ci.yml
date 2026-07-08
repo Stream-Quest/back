@@ -63,7 +63,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: npm
 
       - name: Install dependencies
@@ -96,3 +96,21 @@ jobs:
             exit 1
           fi
           echo "✅ Coverage $COVERAGE% meets threshold"
+
+      - name: Generate swagger.json
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: npm run swagger:generate
+
+      - name: Push swagger.json to stream-quest-docs
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: dmnemec/copy_file_to_another_repo_action@main
+        with:
+          source_file: swagger.json
+          destination_repo: WeaveCast/stream-quest-docs
+          destination_folder: static
+          destination_branch: main
+          user_email: github-actions@github.com
+          user_name: github-actions[bot]
+          commit_message: 'chore: update swagger.json from stream-quest-back'
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.DOCS_GITHUB_TOKEN }}

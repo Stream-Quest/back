@@ -5,6 +5,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import { PrismaExceptionFilter } from './filters/prisma-exception.filter';
 import { AllExceptionsFilter } from './filters/all-exceptions.filter';
+import { writeFileSync } from 'fs';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { rawBody: true });
@@ -28,6 +29,13 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
+
+  if (process.env.GENERATE_SWAGGER === 'true') {
+    writeFileSync('./swagger.json', JSON.stringify(document, null, 2));
+    console.log('✅ swagger.json generated');
+    await app.close();
+    process.exit(0);
+  }
 
   await app.listen(process.env.PORT ?? 3999);
 }
