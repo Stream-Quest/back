@@ -86,8 +86,8 @@ jobs:
 
       - name: Check coverage threshold
         run: |
-          COVERAGE=$(cat coverage/coverage-summary.json | node -e "
-            const data = JSON.parse(require('fs').readFileSync('/dev/stdin', 'utf8'));
+          COVERAGE=$(node -e "
+            const data = require('./coverage/coverage-summary.json');
             console.log(Math.round(data.total.statements.pct));
           ")
           echo "Coverage: $COVERAGE%"
