@@ -7,6 +7,6 @@ export class AppController {
 
   @Get('health')
   health(): { status: string; version: string } {
-    return { status: 'ok', version: '0.1.0' };
+    return this.appService.getHealth();
   }
 }
