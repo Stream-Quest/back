@@ -17,6 +17,7 @@ import { FilterDeletionStatus } from '../../enum/filter-status.enum';
 import { KarmaEventService } from '../karma-event/karma-event.service';
 import { UpdateKarmaResponseDto } from '../karma-event/dto/update-karma-response.dto';
 import { JwtPayloadInterface } from '../../auth/interface/auth.interface';
+import { InputJsonValue } from '@prisma/client/runtime/client';
 
 @Injectable()
 export class CampaignService {
@@ -98,6 +99,7 @@ export class CampaignService {
         },
       },
       ...dto,
+      overlayTheme: dto.overlayTheme as InputJsonValue,
     };
 
     return this.repository.createCampaign(data);
@@ -115,7 +117,12 @@ export class CampaignService {
     const campaignId: string = campaign.id;
     const whereClause = { id: campaignId };
 
-    return this.repository.updateCampaign(whereClause, dto);
+    const data = {
+      ...dto,
+      overlayTheme: dto.overlayTheme as InputJsonValue,
+    };
+
+    return this.repository.updateCampaign(whereClause, data);
   }
 
   async updateCampaignStatus(

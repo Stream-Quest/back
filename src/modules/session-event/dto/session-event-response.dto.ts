@@ -1,5 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { SessionEventStatus } from '../../../generated/prisma/enums';
+import {
+  SessionEventOrigin,
+  SessionEventStatus,
+} from '../../../generated/prisma/enums';
 import { DetailedEventResponseDto } from '../../event/dto/event-response.dto';
 import { ResolutionResponseDto } from '../../resolution/dto/resolution-response.dto';
 
@@ -92,6 +95,19 @@ export class SessionEventResponseDto {
       'Threshold event UUID if this session event was triggered by a karma threshold being reached',
   })
   thresholdEventId: string | null;
+
+  @ApiProperty({
+    enum: SessionEventOrigin,
+    example: SessionEventOrigin.MANUAL,
+    description: '',
+  })
+  origin: SessionEventOrigin;
+
+  @ApiPropertyOptional({
+    example: '_sinwha',
+    description: '',
+  })
+  viewerLogin?: string | null;
 
   @ApiProperty({
     example: '2026-06-29T15:00:00.000Z',
