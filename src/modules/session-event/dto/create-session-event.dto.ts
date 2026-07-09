@@ -1,5 +1,13 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsDateString, IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
+import {
+  IsDateString,
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
+import { SessionEventOrigin } from '../../../generated/prisma/enums';
 
 export class CreateSessionEventDto {
   @ApiProperty({
@@ -17,4 +25,23 @@ export class CreateSessionEventDto {
   @IsDateString()
   @IsOptional()
   triggeredAt?: string;
+
+  @ApiProperty({
+    enum: SessionEventOrigin,
+    example: SessionEventOrigin.MANUAL,
+    description:
+      'Origin of the session event (Twitch webhook, GM manual trigger, or karma threshold)',
+  })
+  @IsEnum(SessionEventOrigin)
+  @IsNotEmpty()
+  origin: SessionEventOrigin;
+
+  @ApiPropertyOptional({
+    example: '_sinwha',
+    description:
+      'Twitch username of the viewer who triggered the event (only set when origin is TWITCH)',
+  })
+  @IsString()
+  @IsOptional()
+  viewerLogin?: string | null;
 }

@@ -30,11 +30,26 @@ export class CreatePlayerCharacterDto {
 
   @ApiPropertyOptional({
     example: 4,
+    default: 1,
     description: "Player character's level",
   })
   @IsInt()
   @IsOptional()
   level?: number | null;
+
+  @ApiPropertyOptional({
+    example: 10,
+    default: 10,
+    description: "Player character's health points",
+  })
+  maxHp?: number | null;
+
+  @ApiPropertyOptional({
+    example: 10,
+    default: 10,
+    description: "Player character's armor class",
+  })
+  armorClass?: number | null;
 
   @ApiPropertyOptional({
     example: 'https://random.url/random-image',
@@ -80,6 +95,20 @@ export class CreatePlayerCharacterDto {
   @IsBoolean()
   @IsOptional()
   displayLevel: boolean;
+
+  @ApiProperty({
+    example: true,
+    default: true,
+    description: 'Are the health points displayable ?',
+  })
+  displayHp: boolean;
+
+  @ApiProperty({
+    example: true,
+    default: false,
+    description: 'Is the armor class displayable ?',
+  })
+  displayArmorClass: boolean;
 
   @ApiProperty({
     example: '550e8400-e29b-41d4-a716-446655440000',

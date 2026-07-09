@@ -84,6 +84,22 @@ enum SessionEventStatus {
   REJECTED
 }
 
+enum CharacterStatus {
+  OK
+  HURT
+  CRITICAL
+  UNCONSCIOUS
+  INSPIRED
+  POISONED
+  ASLEEP
+}
+
+enum SessionEventOrigin {
+  TWITCH
+  MANUAL
+  THRESHOLD
+}
+
 model User {
   id                      String              @id @default(uuid())
   twitchId                String              @unique
@@ -114,6 +130,7 @@ model Campaign {
   createdAt               DateTime            @default(now())
   updatedAt               DateTime            @updatedAt
   deletedAt               DateTime?
+  overlayTheme            Json?
 
   gameMaster              User                @relation(fields: [gameMasterId], references: [id])
   gameMasterId            String
@@ -218,17 +235,23 @@ model PlayerCharacter {
   name                    String
   class                   String?
   level                   Int?                @default(1)
+  maxHp                   Int?                @default(10)
+  armorClass              Int?                @default(10)
   avatarUrl               String?
   isAlive                 Boolean             @default(true)
   displayAvatar           Boolean             @default(true)
   displayClass            Boolean             @default(true)
   displayLevel            Boolean             @default(true)
+  displayHp               Boolean             @default(true)
+  displayArmorClass       Boolean             @default(false)
+  displayStatus           Boolean             @default(true)
   createdAt               DateTime            @default(now())
   updatedAt               DateTime            @updatedAt
   
   campaign                Campaign            @relation(fields: [campaignId], references: [id])
   campaignId              String
   sessionPlayers          SessionPlayerCharacter[]
+  sessionStreamers        SessionStreamer[]
 
   @@index([campaignId])
   @@index([isAlive])
@@ -239,6 +262,8 @@ model SessionPlayerCharacter {
   joinedAt                DateTime
   leftAt                  DateTime?
   status                  PlayerStatus        @default(ACTIVE)
+  currentHp               Int?                @default(10)
+  charStatus              CharacterStatus     @default(OK)
 
   session                 Session             @relation(fields: [sessionId], references: [id])
   sessionId               String
@@ -378,6 +403,8 @@ model SessionEvent {
   resolvedAt              DateTime?
   createdAt               DateTime            @default(now())
   updatedAt               DateTime            @updatedAt
+  origin                  SessionEventOrigin  @default(MANUAL)
+  viewerLogin             String?
   
   session                 Session             @relation(fields: [sessionId], references: [id])
   sessionId               String
@@ -449,13 +476,21 @@ model TwitchEventMapping {
 }
 
 model SessionStreamer {
-  id          String   @id @default(uuid())
-  createdAt   DateTime @default(now())
+  id                      String              @id @default(uuid())
+  canViewEvents           Boolean             @default(true)
+  canViewKarma            Boolean             @default(true)
+  canViewMilestones       Boolean             @default(true)
+  canViewContext          Boolean             @default(true)
+  canViewPlayers          Boolean             @default(false)
+  createdAt               DateTime            @default(now())
+  updatedAt               DateTime            @updatedAt
 
-  session     Session  @relation(fields: [sessionId], references: [id])
-  sessionId   String
-  user        User     @relation(fields: [userId], references: [id])
-  userId      String
+  session                 Session             @relation(fields: [sessionId], references: [id])
+  sessionId               String
+  user                    User                @relation(fields: [userId], references: [id])
+  userId                  String
+  playerCharacter         PlayerCharacter?    @relation(fields: [playerCharacterId], references: [id])
+  playerCharacterId       String?
 
   @@unique([sessionId, userId])
   @@index([sessionId])

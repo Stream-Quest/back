@@ -1,7 +1,9 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import type { JsonValue } from '@prisma/client/runtime/client';
 import {
   IsInt,
   IsNotEmpty,
+  IsObject,
   IsOptional,
   IsString,
   MaxLength,
@@ -38,4 +40,13 @@ export class CreateCampaignDto {
   })
   @IsInt()
   blessingThreshold: number;
+
+  @ApiPropertyOptional({
+    description:
+      'Overlay theme configuration (reserved for v2 — custom colors, fonts and preset themes)',
+    example: { preset: 'nordic', primaryColor: '#C9A84C' },
+  })
+  @IsObject()
+  @IsOptional()
+  overlayTheme?: JsonValue;
 }

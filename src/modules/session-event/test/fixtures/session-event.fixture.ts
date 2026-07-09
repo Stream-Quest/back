@@ -1,5 +1,6 @@
 import {
   SessionEvent,
+  SessionEventOrigin,
   SessionEventStatus,
 } from '../../../../generated/prisma/client';
 import { SessionEventWithDetails } from '../../session-event.repository';
@@ -16,7 +17,9 @@ export const createMockSessionEvent = (
   sessionId: 'session-123',
   eventId: 'event-123',
   chosenResolutionId: null,
-  thresholdEventId: null, // ← ajouter
+  thresholdEventId: null,
+  origin: SessionEventOrigin.MANUAL,
+  viewerLogin: null,
   createdAt: new Date('2024-01-01'),
   updatedAt: new Date('2024-01-01'),
   ...overrides,
