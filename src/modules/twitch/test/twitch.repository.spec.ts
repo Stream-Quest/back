@@ -288,16 +288,15 @@ describe('TwitchService', () => {
     it.each(cases)(
       'should map $type (tier: $event.tier) to $expected',
       ({ type, event, expected }) => {
-        const result = (service as any).mapToTriggerType(type, event) as string;
+        const result = service.mapToTriggerType(type, event) as string;
         expect(result).toBe(expected);
       },
     );
 
     it('should return null for unknown subscription type', () => {
-      const result = (service as any).mapToTriggerType(
-        'channel.unknown',
-        {},
-      ) as string | null;
+      const result = service.mapToTriggerType('channel.unknown', {}) as
+        | string
+        | null;
       expect(result).toBeNull();
     });
   });

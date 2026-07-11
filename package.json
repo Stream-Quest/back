@@ -95,7 +95,8 @@
       "!**/dist/**",
       "!**/generated/**",
       "!**/*.module.ts",
-      "!**/main.ts"
+      "!**/main.ts",
+      "!**/generate-swagger.ts"
     ],
     "coverageDirectory": "../coverage",
     "coverageReporters": [

@@ -11,6 +11,7 @@ import {
   Rule,
   Session,
   SessionEvent,
+  SessionStreamer,
   TwitchEventMapping,
   Weather,
 } from '../generated/prisma/client';
@@ -34,6 +35,7 @@ declare global {
       karmaEvent?: KarmaEvent;
       thresholdEvent?: CampaignThresholdEvent;
       twitchMapping?: TwitchEventMapping;
+      sessionStreamer?: SessionStreamer;
     }
   }
 }

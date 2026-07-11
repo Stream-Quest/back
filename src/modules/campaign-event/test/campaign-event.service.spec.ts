@@ -9,6 +9,7 @@ import {
 import { createMockCampaignEventRepository } from './mocks/campaign-event.repository.mock';
 import { createMockEventRepository } from '../../event/test/mocks/event.repository.mock';
 import { CampaignEventService } from '../campaign-event.service';
+import { createMockEventWithDetails } from '../../event/test/fixtures/event.fixture';
 
 describe('CampaignEventService', () => {
   let service: CampaignEventService;
@@ -103,7 +104,7 @@ describe('CampaignEventService', () => {
     it('should create campaign event when event exists', async () => {
       jest
         .spyOn(eventRepository, 'getEvent')
-        .mockResolvedValue({ id: 'event-123' } as any);
+        .mockResolvedValue(createMockEventWithDetails());
       jest
         .spyOn(repository, 'createCampaignEvent')
         .mockResolvedValue(mockCampaignEvent);

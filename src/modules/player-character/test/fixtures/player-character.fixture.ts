@@ -4,8 +4,8 @@ export const createMockPlayerCharacter = (
   overrides: Partial<PlayerCharacter> = {},
 ): PlayerCharacter => ({
   id: 'player-character-123',
-  name: 'Aragorn',
-  class: 'Ranger',
+  name: "Magend'ok",
+  class: 'Fiend Warlock',
   level: 8,
   maxHp: 55,
   armorClass: 16,

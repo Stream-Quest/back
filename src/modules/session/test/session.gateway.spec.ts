@@ -65,7 +65,7 @@ describe('SessionGateway', () => {
     }).compile();
 
     gateway = module.get(SessionGateway);
-    gateway.server = createMockServer() as any;
+    gateway.server = createMockServer();
 
     jest.clearAllMocks();
   });
@@ -89,7 +89,7 @@ describe('SessionGateway', () => {
     it('should disconnect client when no token is provided', async () => {
       const client = createMockSocket({});
 
-      await gateway.handleConnection(client as any);
+      await gateway.handleConnection(client);
 
       expect(client.disconnect).toHaveBeenCalled();
     });
@@ -101,7 +101,7 @@ describe('SessionGateway', () => {
         overlayToken: 'valid-overlay-token',
       });
 
-      await gateway.handleConnection(client as any);
+      await gateway.handleConnection(client);
 
       expect(client.data).toEqual({ userId: 'user-123', type: 'overlay' });
       expect(client.disconnect).not.toHaveBeenCalled();
@@ -111,7 +111,7 @@ describe('SessionGateway', () => {
       const client = createMockSocket({ overlayToken: 'invalid-token' });
       prismaService.user.findUnique.mockResolvedValue(null);
 
-      await gateway.handleConnection(client as any);
+      await gateway.handleConnection(client);
 
       expect(client.disconnect).toHaveBeenCalled();
     });
@@ -124,7 +124,7 @@ describe('SessionGateway', () => {
         type: 'ws',
       });
 
-      await gateway.handleConnection(client as any);
+      await gateway.handleConnection(client);
 
       expect(client.data).toEqual({ userId: 'user-123', type: 'gm' });
       expect(client.disconnect).not.toHaveBeenCalled();
@@ -138,7 +138,7 @@ describe('SessionGateway', () => {
         type: 'gm',
       });
 
-      await gateway.handleConnection(client as any);
+      await gateway.handleConnection(client);
 
       expect(client.disconnect).toHaveBeenCalled();
     });
@@ -149,7 +149,7 @@ describe('SessionGateway', () => {
         throw new Error('Invalid token');
       });
 
-      await gateway.handleConnection(client as any);
+      await gateway.handleConnection(client);
 
       expect(client.disconnect).toHaveBeenCalled();
     });
@@ -161,7 +161,7 @@ describe('SessionGateway', () => {
     it('should log client disconnection', () => {
       const client = createMockSocket();
 
-      expect(() => gateway.handleDisconnect(client as any)).not.toThrow();
+      expect(() => gateway.handleDisconnect(client)).not.toThrow();
     });
   });
 
@@ -172,7 +172,7 @@ describe('SessionGateway', () => {
       const client = createMockSocket();
       client.data = {};
 
-      await gateway.handleJoin(client as any, 'session-123');
+      await gateway.handleJoin(client, 'session-123');
 
       expect(client.disconnect).toHaveBeenCalled();
     });
@@ -182,7 +182,7 @@ describe('SessionGateway', () => {
       client.data = { userId: 'user-123', type: 'gm' };
       prismaService.session.findUnique.mockResolvedValue(null);
 
-      await gateway.handleJoin(client as any, 'not-found');
+      await gateway.handleJoin(client, 'not-found');
 
       expect(client.emit).toHaveBeenCalledWith('session:error', {
         message: 'Session not found',
@@ -197,7 +197,7 @@ describe('SessionGateway', () => {
         campaign: { ...mockCampaign, gameMasterId: 'user-123' },
       });
 
-      await gateway.handleJoin(client as any, mockSession.id);
+      await gateway.handleJoin(client, mockSession.id);
 
       expect(client.emit).toHaveBeenCalledWith('session:error', {
         message: 'You do not own this session',
@@ -212,7 +212,7 @@ describe('SessionGateway', () => {
         campaign: { ...mockCampaign, gameMasterId: 'user-123' },
       });
 
-      await gateway.handleJoin(client as any, mockSession.id);
+      await gateway.handleJoin(client, mockSession.id);
 
       expect(client.join).toHaveBeenCalledWith(`session:${mockSession.id}`);
       expect(client.emit).toHaveBeenCalledWith('session:joined', {
@@ -228,7 +228,7 @@ describe('SessionGateway', () => {
         campaign: { ...mockCampaign, gameMasterId: 'other-user' },
       });
 
-      await gateway.handleJoin(client as any, mockSession.id);
+      await gateway.handleJoin(client, mockSession.id);
 
       expect(client.join).toHaveBeenCalledWith(`session:${mockSession.id}`);
       expect(client.emit).toHaveBeenCalledWith('session:joined', {
@@ -244,7 +244,7 @@ describe('SessionGateway', () => {
       const client = createMockSocket();
       client.data = { userId: 'user-123', type: 'gm' };
 
-      await gateway.handleLeave(client as any, mockSession.id);
+      await gateway.handleLeave(client, mockSession.id);
 
       expect(client.leave).toHaveBeenCalledWith(`session:${mockSession.id}`);
       expect(client.emit).toHaveBeenCalledWith('session:left', {
