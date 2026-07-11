@@ -96,9 +96,7 @@ describe('AuthService', () => {
 
       const mockJwtPayload = { sub: 'user-123', username: 'testuser' };
 
-      jest
-        .spyOn(prismaService.user, 'findUnique')
-        .mockResolvedValue(userInfo as any);
+      jest.spyOn(prismaService.user, 'findUnique').mockResolvedValue(userInfo);
 
       const result = await service.getAuthenticatedUser(mockJwtPayload);
 

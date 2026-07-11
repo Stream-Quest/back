@@ -11,10 +11,15 @@ import { EventRepository } from '../event/event.repository';
 import { KarmaEventModule } from '../karma-event/karma-event.module';
 import { AuthModule } from '../../auth/auth.module';
 import { JwtAuthGuard } from '../../auth/guard/jwt-auth.guard';
+import { SessionStreamerService } from '../session-streamer/session-streamer.service';
+import { SessionStreamerRepository } from '../session-streamer/session-streamer.repository';
+import { SessionStreamerGuard } from '../session-streamer/guard/session-streamer.guard';
+import { SessionStreamerController } from '../session-streamer/session-streamer.controller';
+import { InviteController } from '../session-streamer/invite.controller';
 
 @Module({
   imports: [PrismaModule, KarmaEventModule, AuthModule],
-  controllers: [SessionController],
+  controllers: [SessionController, SessionStreamerController, InviteController],
   providers: [
     SessionService,
     SessionRepository,
@@ -24,6 +29,9 @@ import { JwtAuthGuard } from '../../auth/guard/jwt-auth.guard';
     EventRepository,
     JwtAuthGuard,
     SessionGateway,
+    SessionStreamerService,
+    SessionStreamerRepository,
+    SessionStreamerGuard,
   ],
 })
 export class SessionModule {}

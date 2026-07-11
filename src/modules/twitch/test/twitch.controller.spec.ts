@@ -41,8 +41,8 @@ describe('TwitchController', () => {
         .mockResolvedValue({ challenge: 'abc123' });
 
       await controller.handleWebhook(
-        req as any,
-        res as any,
+        req,
+        res,
         'msg-123',
         '2024-01-01',
         'sha256=abc',
@@ -58,8 +58,8 @@ describe('TwitchController', () => {
       jest.spyOn(service, 'handleWebhook').mockResolvedValue({});
 
       await controller.handleWebhook(
-        req as any,
-        res as any,
+        req,
+        res,
         'msg-123',
         '2024-01-01',
         'sha256=abc',
@@ -76,8 +76,8 @@ describe('TwitchController', () => {
       jest.spyOn(service, 'handleWebhook').mockResolvedValue({});
 
       await controller.handleWebhook(
-        req as any,
-        res as any,
+        req,
+        res,
         'msg-123',
         '2024-01-01',
         'sha256=abc',
