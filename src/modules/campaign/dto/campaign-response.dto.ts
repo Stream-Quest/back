@@ -4,6 +4,7 @@ import {
   ConclusionType,
 } from '../../../generated/prisma/enums';
 import { PlayerCharacter, Session } from '../../../generated/prisma/client';
+import type { JsonValue } from '@prisma/client/runtime/client';
 
 export class CampaignResponseDto {
   @ApiProperty({
@@ -73,6 +74,9 @@ export class CampaignResponseDto {
     description: 'Last update date',
   })
   updatedAt: Date;
+
+  @ApiPropertyOptional({})
+  overlayTheme?: JsonValue;
 
   @ApiPropertyOptional({
     description: 'Campaign sessions',
