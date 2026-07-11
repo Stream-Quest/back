@@ -17,17 +17,23 @@ import {
 export class PlayerCharacterRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getPlayerCharacterList(options?: {
-    take?: number;
-    cursor?: string;
-    direction?: 'forward' | 'backward';
-    orderBy?: PlayerCharacterOrderByWithRelationInput;
-  }): Promise<PlayerCharacter[]> {
+  async getPlayerCharacterList(
+    where: { campaignId?: string },
+    options?: {
+      take?: number;
+      cursor?: string;
+      direction?: 'forward' | 'backward';
+      orderBy?: PlayerCharacterOrderByWithRelationInput;
+    },
+  ): Promise<PlayerCharacter[]> {
     return paginatedFindMany<PlayerCharacter>(
       () =>
-        this.prisma.playerCharacter.findMany(
-          buildPaginationArgs<PlayerCharacterFindManyArgs>(options),
-        ),
+        this.prisma.playerCharacter.findMany({
+          ...buildPaginationArgs<PlayerCharacterFindManyArgs>(options),
+          where: {
+            ...(where.campaignId && { campaignId: where.campaignId }),
+          },
+        }),
       options?.direction,
     );
   }
