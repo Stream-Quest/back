@@ -96,7 +96,11 @@
       "!**/generated/**",
       "!**/*.module.ts",
       "!**/main.ts",
-      "!**/generate-swagger.ts"
+      "!**/generate-swagger.ts",
+      "!**/dto/pagination-response.dto.ts",
+      "!**/session-event.constant.ts",
+      "!**/update-karma-response.dto.ts",
+      "!**/express.d.ts"
     ],
     "coverageDirectory": "../coverage",
     "coverageReporters": [
