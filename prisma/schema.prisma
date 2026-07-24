@@ -100,6 +100,11 @@ enum SessionEventOrigin {
   THRESHOLD
 }
 
+enum SessionStreamerRole {
+  GM
+  PLAYER
+}
+
 model User {
   id                      String              @id @default(uuid())
   twitchId                String              @unique
@@ -477,6 +482,7 @@ model TwitchEventMapping {
 
 model SessionStreamer {
   id                      String              @id @default(uuid())
+  role                    SessionStreamerRole @default(PLAYER)
   canViewEvents           Boolean             @default(true)
   canViewKarma            Boolean             @default(true)
   canViewMilestones       Boolean             @default(true)

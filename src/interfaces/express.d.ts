@@ -11,8 +11,10 @@ import {
   Rule,
   Session,
   SessionEvent,
+  SessionPlayerCharacter,
   SessionStreamer,
   TwitchEventMapping,
+  User,
   Weather,
 } from '../generated/prisma/client';
 import { JwtPayloadInterface } from '../modules/auth/interface/auth.interface';
@@ -36,6 +38,11 @@ declare global {
       thresholdEvent?: CampaignThresholdEvent;
       twitchMapping?: TwitchEventMapping;
       sessionStreamer?: SessionStreamer;
+      sessionPlayerCharacter?: SessionPlayerCharacter;
+      overlayContext?: {
+        user: User;
+        sessionStreamer: SessionStreamer;
+      };
     }
   }
 }

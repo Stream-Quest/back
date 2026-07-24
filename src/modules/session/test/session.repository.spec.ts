@@ -1,9 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { SessionRepository } from '../session.repository';
 import { PrismaService } from '../../../prisma/prisma.service';
-import { SessionStatus, TimeOfDay } from '../../../generated/prisma/client';
+import {
+  SessionStatus,
+  SessionStreamerRole,
+  TimeOfDay,
+} from '../../../generated/prisma/client';
 import { createMockSession } from './fixtures/session.fixture';
 import { createMockPrismaService } from './mocks/session.prisma.mock';
+import { createMockCampaign } from '../../campaign/test/fixtures/campaign.fixture';
+import { createMockSessionStreamer } from '../../session-streamer/test/fixtures/session-streamer.fixture';
 
 describe('SessionRepository', () => {
   let repository: SessionRepository;
@@ -141,10 +147,16 @@ describe('SessionRepository', () => {
   });
 
   describe('createSession', () => {
-    it('should create and return a session', async () => {
+    it('should create a session and its GM SessionStreamer in a transaction', async () => {
+      jest
+        .spyOn(prismaService.campaign, 'findUniqueOrThrow')
+        .mockResolvedValue(createMockCampaign({ gameMasterId: 'user-123' }));
       jest
         .spyOn(prismaService.session, 'create')
         .mockResolvedValue(mockSession);
+      jest
+        .spyOn(prismaService.sessionStreamer, 'create')
+        .mockResolvedValue(createMockSessionStreamer());
 
       const createData = {
         title: 'New Session',
@@ -155,6 +167,11 @@ describe('SessionRepository', () => {
       const result = await repository.createSession(createData);
 
       expect(result).toEqual(mockSession);
+      expect(prismaService.$transaction).toHaveBeenCalled();
+      expect(prismaService.campaign.findUniqueOrThrow).toHaveBeenCalledWith({
+        where: { id: 'campaign-123' },
+        select: { gameMasterId: true },
+      });
       expect(prismaService.session.create).toHaveBeenCalledWith({
         data: {
           title: 'New Session',
@@ -162,6 +179,18 @@ describe('SessionRepository', () => {
           campaign: { connect: { id: 'campaign-123' } },
         },
         include: expect.anything(),
+      });
+      expect(prismaService.sessionStreamer.create).toHaveBeenCalledWith({
+        data: {
+          session: { connect: { id: mockSession.id } },
+          user: { connect: { id: 'user-123' } },
+          role: SessionStreamerRole.GM,
+          canViewEvents: true,
+          canViewKarma: true,
+          canViewMilestones: true,
+          canViewContext: true,
+          canViewPlayers: true,
+        },
       });
     });
   });

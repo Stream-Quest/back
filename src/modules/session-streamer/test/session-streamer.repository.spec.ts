@@ -94,6 +94,43 @@ describe('SessionStreamerRepository', () => {
     });
   });
 
+  describe('getSessionWithCampaign', () => {
+    it('should return session with campaign and game master details', async () => {
+      const mockSession = {
+        id: 'session-123',
+        title: 'Session #12',
+        campaign: {
+          title: 'The Lost Chronicles',
+          gameMaster: { username: 'maengdok_' },
+        },
+      };
+      mockPrisma.session.findUnique.mockResolvedValue(mockSession);
+
+      const result = await repository.getSessionWithCampaign('session-123');
+
+      expect(result).toEqual(mockSession);
+      expect(prisma.session.findUnique).toHaveBeenCalledWith({
+        where: { id: 'session-123' },
+        include: {
+          campaign: {
+            select: {
+              title: true,
+              gameMaster: { select: { username: true } },
+            },
+          },
+        },
+      });
+    });
+
+    it('should return null when session not found', async () => {
+      mockPrisma.session.findUnique.mockResolvedValue(null);
+
+      const result = await repository.getSessionWithCampaign('not-found');
+
+      expect(result).toBeNull();
+    });
+  });
+
   describe('createSessionStreamer', () => {
     it('should create a streamer', async () => {
       const mockStreamer = createMockSessionStreamer();
@@ -183,6 +220,22 @@ describe('SessionStreamerRepository', () => {
       expect(result).toEqual(mockStreamer);
       expect(prisma.sessionStreamer.delete).toHaveBeenCalledWith({
         where: { id: 'session-streamer-123' },
+      });
+    });
+  });
+
+  describe('getUserOverlayToken', () => {
+    it('should return the overlay token for the user', async () => {
+      mockPrisma.user.findUniqueOrThrow.mockResolvedValue({
+        overlayToken: 'overlay-token-123',
+      });
+
+      const result = await repository.getUserOverlayToken('user-123');
+
+      expect(result).toEqual({ overlayToken: 'overlay-token-123' });
+      expect(prisma.user.findUniqueOrThrow).toHaveBeenCalledWith({
+        where: { id: 'user-123' },
+        select: { overlayToken: true },
       });
     });
   });

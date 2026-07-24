@@ -13,6 +13,7 @@ import {
   InviteLinkResponseDto,
   SessionStreamerResponseDto,
 } from './dto/session-streamer-response.dto';
+import { OverlayLinkResponseDto } from './dto/overlay-link-response.dto';
 
 @Injectable()
 export class SessionStreamerService {
@@ -83,5 +84,38 @@ export class SessionStreamerService {
     streamer: SessionStreamer,
   ): Promise<SessionStreamer> {
     return await this.repository.deleteSessionStreamer(streamer.id);
+  }
+
+  async getOverlayLink(
+    sessionId: string,
+    userId: string,
+  ): Promise<OverlayLinkResponseDto> {
+    const streamer = await this.repository.getSessionStreamerByUserAndSession(
+      userId,
+      sessionId,
+    );
+    if (!streamer) {
+      throw new NotFoundException('You are not a streamer on this session');
+    }
+
+    const { overlayToken } = await this.repository.getUserOverlayToken(userId);
+
+    const baseUrl = `${process.env.OVERLAY_BASE_URL}/overlay/${sessionId}`;
+
+    const overlayFields: { type: string; enabled: boolean }[] = [
+      { type: 'milestones', enabled: streamer.canViewMilestones },
+      { type: 'events', enabled: streamer.canViewEvents },
+      { type: 'karma', enabled: streamer.canViewKarma },
+      { type: 'context', enabled: streamer.canViewContext },
+      { type: 'players', enabled: streamer.canViewPlayers },
+    ];
+
+    return {
+      overlays: overlayFields.map(({ type, enabled }) => ({
+        type,
+        url: `${baseUrl}/${type}?token=${overlayToken}`,
+        enabled,
+      })),
+    };
   }
 }

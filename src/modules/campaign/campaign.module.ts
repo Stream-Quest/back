@@ -7,11 +7,9 @@ import { CampaignEventService } from '../campaign-event/campaign-event.service';
 import { CampaignEventRepository } from '../campaign-event/campaign-event.repository';
 import { EventRepository } from '../event/event.repository';
 import { KarmaEventModule } from '../karma-event/karma-event.module';
-import { AuthModule } from '../../auth/auth.module';
-import { JwtAuthGuard } from '../../auth/guard/jwt-auth.guard';
 
 @Module({
-  imports: [PrismaModule, KarmaEventModule, AuthModule],
+  imports: [PrismaModule, KarmaEventModule],
   controllers: [CampaignController],
   providers: [
     CampaignService,
@@ -19,7 +17,6 @@ import { JwtAuthGuard } from '../../auth/guard/jwt-auth.guard';
     CampaignEventService,
     CampaignEventRepository,
     EventRepository,
-    JwtAuthGuard,
   ],
 })
 export class CampaignModule {}

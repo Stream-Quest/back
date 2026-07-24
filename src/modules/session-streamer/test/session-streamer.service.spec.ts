@@ -162,4 +162,73 @@ describe('SessionStreamerService', () => {
       );
     });
   });
+
+  describe('getOverlayLink', () => {
+    const originalOverlayBaseUrl = process.env.OVERLAY_BASE_URL;
+
+    beforeEach(() => {
+      process.env.OVERLAY_BASE_URL = 'https://overlay.app';
+    });
+
+    afterAll(() => {
+      process.env.OVERLAY_BASE_URL = originalOverlayBaseUrl;
+    });
+
+    it('should throw NotFoundException when user is not a streamer on this session', async () => {
+      mockRepository.getSessionStreamerByUserAndSession.mockResolvedValue(null);
+
+      await expect(
+        service.getOverlayLink('session-123', 'user-123'),
+      ).rejects.toThrow(NotFoundException);
+    });
+
+    it('should return overlay links for every field with its enabled state', async () => {
+      const mockStreamer = createMockSessionStreamer({
+        canViewMilestones: true,
+        canViewEvents: true,
+        canViewKarma: false,
+        canViewContext: true,
+        canViewPlayers: false,
+      });
+      mockRepository.getSessionStreamerByUserAndSession.mockResolvedValue(
+        mockStreamer,
+      );
+      mockRepository.getUserOverlayToken.mockResolvedValue({
+        overlayToken: 'overlay-token-123',
+      });
+
+      const result = await service.getOverlayLink('session-123', 'user-123');
+
+      expect(result).toEqual({
+        overlays: [
+          {
+            type: 'milestones',
+            url: 'https://overlay.app/overlay/session-123/milestones?token=overlay-token-123',
+            enabled: true,
+          },
+          {
+            type: 'events',
+            url: 'https://overlay.app/overlay/session-123/events?token=overlay-token-123',
+            enabled: true,
+          },
+          {
+            type: 'karma',
+            url: 'https://overlay.app/overlay/session-123/karma?token=overlay-token-123',
+            enabled: false,
+          },
+          {
+            type: 'context',
+            url: 'https://overlay.app/overlay/session-123/context?token=overlay-token-123',
+            enabled: true,
+          },
+          {
+            type: 'players',
+            url: 'https://overlay.app/overlay/session-123/players?token=overlay-token-123',
+            enabled: false,
+          },
+        ],
+      });
+      expect(repository.getUserOverlayToken).toHaveBeenCalledWith('user-123');
+    });
+  });
 });

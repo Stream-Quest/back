@@ -9,11 +9,9 @@ import { ThresholdEventGuard } from '../threshold-event/guard/threshold-event.gu
 import { CampaignGuard } from '../campaign/guard/campaign.guard';
 import { EventRepository } from '../event/event.repository';
 import { RedisModule } from '../../redis/redis.module';
-import { AuthModule } from '../../auth/auth.module';
-import { JwtAuthGuard } from '../../auth/guard/jwt-auth.guard';
 
 @Module({
-  imports: [PrismaModule, AuthModule, RedisModule],
+  imports: [PrismaModule, RedisModule],
   controllers: [KarmaEventController],
   providers: [
     KarmaEventService,
@@ -21,7 +19,6 @@ import { JwtAuthGuard } from '../../auth/guard/jwt-auth.guard';
     ThresholdEventService,
     ThresholdEventRepository,
     ThresholdEventGuard,
-    JwtAuthGuard,
     CampaignGuard,
     EventRepository,
   ],

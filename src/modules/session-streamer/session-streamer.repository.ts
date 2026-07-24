@@ -120,4 +120,11 @@ export class SessionStreamerRepository {
   async deleteSessionStreamer(id: string): Promise<SessionStreamer> {
     return await this.prisma.sessionStreamer.delete({ where: { id } });
   }
+
+  async getUserOverlayToken(userId: string): Promise<{ overlayToken: string }> {
+    return await this.prisma.user.findUniqueOrThrow({
+      where: { id: userId },
+      select: { overlayToken: true },
+    });
+  }
 }

@@ -104,6 +104,10 @@
       "lcov",
       "json-summary"
     ],
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "generate-swagger.ts"
+    ],
     "testEnvironment": "node",
     "moduleNameMapper": {
       "^@/(.*)$": "<rootDir>/$1",

@@ -22,4 +22,7 @@ export const createMockSessionStreamerRepository = () => ({
   deleteSessionStreamer: jest
     .fn()
     .mockResolvedValue(createMockSessionStreamer()),
+  getUserOverlayToken: jest
+    .fn()
+    .mockResolvedValue({ overlayToken: 'overlay-token-123' }),
 });
