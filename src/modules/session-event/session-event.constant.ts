@@ -1,6 +1,6 @@
 // Channels Redis
 
-import { TimeOfDay } from '../../../generated/prisma/enums';
+import { TimeOfDay } from '../../generated/prisma/enums';
 
 // Usage : `session:${sessionId}:${SESSION_CHANNEL_STARTED}`
 export const SESSION_STARTED = 'started';
