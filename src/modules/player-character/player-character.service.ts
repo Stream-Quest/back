@@ -19,13 +19,15 @@ export class PlayerCharacterService {
   async getPlayerCharacterList(
     queryDto: PlayerCharacterQueryDto,
   ): Promise<PaginationResponseDto<PlayerCharacterResponseDto>> {
-    const playerCharacters = await this.repository.getPlayerCharacterList({
-      take: (queryDto.limit || 10) + 1,
-      cursor: queryDto.cursor,
-      direction: queryDto.direction,
-      orderBy: { createdAt: 'desc' },
-    });
-
+    const playerCharacters = await this.repository.getPlayerCharacterList(
+      { campaignId: queryDto.campaignId },
+      {
+        take: (queryDto.limit || 10) + 1,
+        cursor: queryDto.cursor,
+        direction: queryDto.direction,
+        orderBy: { createdAt: 'desc' },
+      },
+    );
     return paginate(playerCharacters, queryDto);
   }
 

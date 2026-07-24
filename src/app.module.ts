@@ -16,8 +16,10 @@ import { TwitchModule } from './modules/twitch/twitch.module';
 import { TwitchMappingModule } from './modules/twitch-mapping/twitch-mapping.module';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
+import { OverlayModule } from './modules/overlay/overlay.module';
 
 const required = Joi.string().required();
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -30,6 +32,7 @@ const required = Joi.string().required();
         REDIS_HOST: required,
         REDIS_PORT: required,
         REDIS_PASSWORD: required,
+        OVERLAY_BASE_URL: required,
       }),
     }),
     PrismaModule,
@@ -45,6 +48,7 @@ const required = Joi.string().required();
     KarmaEventModule,
     TwitchModule,
     TwitchMappingModule,
+    OverlayModule,
   ],
   controllers: [AppController],
   providers: [AppService],

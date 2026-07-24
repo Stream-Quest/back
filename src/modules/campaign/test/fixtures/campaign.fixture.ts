@@ -14,6 +14,7 @@ export const createMockCampaign = (overrides: Partial<Campaign> = {}) => ({
   updatedAt: new Date('2024-01-01'),
   deletedAt: null,
   gameMasterId: 'user-123',
+  overlayTheme: null,
   _count: { sessions: 0, campaignEvents: 0 }, // ← ajouter
   ...overrides,
 });

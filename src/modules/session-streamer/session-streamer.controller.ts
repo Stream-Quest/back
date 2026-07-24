@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Get, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { SessionStreamerService } from './session-streamer.service';
 import {
@@ -9,6 +17,7 @@ import {
 import {
   DeleteSessionStreamerRoute,
   GenerateInviteLinkRoute,
+  GetOverlayLinkRoute,
   GetSessionStreamerListRoute,
   UpdateSessionStreamerRoute,
 } from './decorator/session-streamer-routes.decorator';
@@ -16,6 +25,9 @@ import { SessionStreamerContext } from './decorator/session-streamer.decorator';
 import { UpdateSessionStreamerDto } from './dto/update-session-streamer.dto';
 import type { Session, SessionStreamer } from '../../generated/prisma/client';
 import { SessionContext } from '../session/decorator/session.decorator';
+import { UserContext } from '../../decorators/user.decorator';
+import type { JwtPayloadInterface } from '../../auth/interface/auth.interface';
+import { OverlayLinkResponseDto } from './dto/overlay-link-response.dto';
 
 @ApiTags('Session Streamer')
 @Controller('session')
@@ -58,5 +70,17 @@ export class SessionStreamerController {
     @SessionStreamerContext() streamer: SessionStreamer,
   ): Promise<SessionStreamer> {
     return await this.sessionStreamerService.deleteSessionStreamer(streamer);
+  }
+
+  @Get(':id/me/overlay-link')
+  @GetOverlayLinkRoute('Get your own overlay links for this session')
+  async getMyOverlayLink(
+    @Param('id') sessionId: string,
+    @UserContext() user: JwtPayloadInterface,
+  ): Promise<OverlayLinkResponseDto> {
+    return await this.sessionStreamerService.getOverlayLink(
+      sessionId,
+      user.sub,
+    );
   }
 }

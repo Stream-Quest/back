@@ -89,6 +89,13 @@ export class PlayerCharacterResponseDto {
   displayArmorClass: boolean;
 
   @ApiProperty({
+    example: true,
+    default: true,
+    description: 'Is the status displayable ?',
+  })
+  displayStatus: boolean;
+
+  @ApiProperty({
     example: '2026-05-13T10:00:00.000Z',
     description: 'Creation date',
   })

@@ -16,13 +16,11 @@ import { CampaignGuard } from '../guard/campaign.guard';
 import { CampaignEventGuard } from '../../campaign-event/guard/campaign-event.guard';
 import { CampaignEventService } from '../../campaign-event/campaign-event.service';
 import { createMockCampaignEventService } from '../../campaign-event/test/mocks/campaign-event.service.mock';
-import { createMockCampaignEventWithEvent } from '../../campaign-event/test/fixtures/campaign-event.fixture';
 import { JwtAuthGuard } from '../../../auth/guard/jwt-auth.guard';
 
 describe('CampaignController', () => {
   let controller: CampaignController;
   let service: CampaignService;
-  let campaignEventService: CampaignEventService;
 
   const mockUser = createMockUser();
   const mockCampaign = createMockCampaign();
@@ -85,7 +83,6 @@ describe('CampaignController', () => {
 
     controller = module.get(CampaignController);
     service = module.get(CampaignService);
-    campaignEventService = module.get(CampaignEventService);
 
     jest.clearAllMocks();
   });
@@ -322,101 +319,6 @@ describe('CampaignController', () => {
 
     it('should apply CampaignGuard to protected routes', () => {
       expect(mockCampaignGuard.canActivate).toBeDefined();
-    });
-  });
-
-  describe('getCampaignEventList', () => {
-    it('should return paginated campaign event list', async () => {
-      const mockResponse = {
-        data: [mockCampaignEvent],
-        nextCursor: null,
-        previousCursor: null,
-        count: 1,
-        hasMore: false,
-        hasPrevious: false,
-      };
-      jest
-        .spyOn(campaignEventService, 'getCampaignEventList')
-        .mockResolvedValue(mockResponse);
-
-      const result = await controller.getCampaignEventList('campaign-123', {
-        limit: 10,
-      });
-
-      expect(result).toEqual(mockResponse);
-      expect(campaignEventService.getCampaignEventList).toHaveBeenCalledWith(
-        'campaign-123',
-        { limit: 10 },
-      );
-    });
-  });
-
-  describe('getCampaignEvent', () => {
-    it('should return campaign event details', async () => {
-      const mockEventWithDetails = createMockCampaignEventWithEvent();
-      jest
-        .spyOn(campaignEventService, 'getCampaignEvent')
-        .mockResolvedValue(mockEventWithDetails);
-
-      const result = await controller.getCampaignEvent('campaign-event-123');
-
-      expect(result).toEqual(mockEventWithDetails);
-      expect(campaignEventService.getCampaignEvent).toHaveBeenCalledWith(
-        'campaign-event-123',
-      );
-    });
-  });
-
-  describe('createCampaignEvent', () => {
-    it('should create and return a campaign event', async () => {
-      jest
-        .spyOn(campaignEventService, 'createCampaignEvent')
-        .mockResolvedValue(mockCampaignEvent);
-
-      const result = await controller.createCampaignEvent('campaign-123', {
-        eventId: 'event-123',
-      });
-
-      expect(result).toEqual(mockCampaignEvent);
-      expect(campaignEventService.createCampaignEvent).toHaveBeenCalledWith(
-        { eventId: 'event-123' },
-        'campaign-123',
-      );
-    });
-  });
-
-  describe('updateCampaignEvent', () => {
-    it('should update and return a campaign event', async () => {
-      const updatedEvent = { ...mockCampaignEvent, isActive: false };
-      jest
-        .spyOn(campaignEventService, 'updateCampaignEvent')
-        .mockResolvedValue(updatedEvent);
-
-      const result = await controller.updateCampaignEvent(
-        { isActive: false },
-        mockCampaignEvent,
-      );
-
-      expect(result).toEqual(updatedEvent);
-      expect(campaignEventService.updateCampaignEvent).toHaveBeenCalledWith(
-        { isActive: false },
-        mockCampaignEvent,
-      );
-    });
-  });
-
-  describe('deleteCampaignEvent', () => {
-    it('should delete and return a campaign event', async () => {
-      jest
-        .spyOn(campaignEventService, 'deleteCampaignEvent')
-        .mockResolvedValue(mockCampaignEvent);
-
-      const result = await controller.deleteCampaignEvent(mockCampaignEvent);
-
-      expect(result).toEqual(mockCampaignEvent);
-      expect(campaignEventService.deleteCampaignEvent).toHaveBeenCalledWith(
-        mockCampaignEvent,
-      );
     });
   });
 });

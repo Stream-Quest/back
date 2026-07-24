@@ -7,6 +7,7 @@ export const createMockSessionStreamer = (
   id: 'session-streamer-123',
   sessionId: 'session-123',
   userId: 'user-123',
+  role: 'PLAYER' as const,
   playerCharacterId: null,
   canViewEvents: true,
   canViewKarma: true,

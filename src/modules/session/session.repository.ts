@@ -13,6 +13,7 @@ import {
   Prisma,
   Session,
   SessionStatus,
+  SessionStreamerRole,
 } from '../../generated/prisma/client';
 import { UpdateContextSnapshotDto } from './dto/update-context.dto';
 import { CreateSessionDto } from './dto/create-session.dto';
@@ -83,14 +84,36 @@ export class SessionRepository {
   async createSession(dto: CreateSessionDto): Promise<SessionWithCount> {
     const { campaignId, ...data } = dto;
 
-    return await this.prisma.session.create({
-      data: {
-        ...data,
-        campaign: {
-          connect: { id: campaignId },
+    return await this.prisma.$transaction(async (tx) => {
+      const campaign = await tx.campaign.findUniqueOrThrow({
+        where: { id: campaignId },
+        select: { gameMasterId: true },
+      });
+
+      const session = await tx.session.create({
+        data: {
+          ...data,
+          campaign: {
+            connect: { id: campaignId },
+          },
         },
-      },
-      include: SESSION_INCLUDE_COUNT,
+        include: SESSION_INCLUDE_COUNT,
+      });
+
+      await tx.sessionStreamer.create({
+        data: {
+          session: { connect: { id: session.id } },
+          user: { connect: { id: campaign.gameMasterId } },
+          role: SessionStreamerRole.GM,
+          canViewEvents: true,
+          canViewKarma: true,
+          canViewMilestones: true,
+          canViewContext: true,
+          canViewPlayers: true,
+        },
+      });
+
+      return session;
     });
   }
 

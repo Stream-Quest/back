@@ -66,10 +66,13 @@ describe('PlayerCharacterRepository', () => {
         .spyOn(prismaService.playerCharacter, 'findMany')
         .mockResolvedValue(mockPlayerCharacters);
 
-      const result = await repository.getPlayerCharacterList({
-        take: 10,
-        direction: 'forward',
-      });
+      const result = await repository.getPlayerCharacterList(
+        {},
+        {
+          take: 10,
+          direction: 'forward',
+        },
+      );
 
       expect(result).toEqual(mockPlayerCharacters);
       expect(prismaService.playerCharacter.findMany).toHaveBeenCalledWith(
@@ -85,13 +88,19 @@ describe('PlayerCharacterRepository', () => {
         .spyOn(prismaService.playerCharacter, 'findMany')
         .mockResolvedValue([...mockPlayerCharacters]);
 
-      const result = await repository.getPlayerCharacterList({
-        take: 10,
-        direction: 'backward',
-        cursor: 'cursor-123',
-      });
+      const result = await repository.getPlayerCharacterList(
+        {},
+        {
+          take: 10,
+          direction: 'backward',
+          cursor: 'cursor-123',
+        },
+      );
 
-      expect(result).toEqual([...mockPlayerCharacters].reverse());
+      expect(result).toEqual([
+        mockPlayerCharacters[1],
+        mockPlayerCharacters[0],
+      ]);
       expect(prismaService.playerCharacter.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           take: -10,
@@ -106,7 +115,7 @@ describe('PlayerCharacterRepository', () => {
         .spyOn(prismaService.playerCharacter, 'findMany')
         .mockResolvedValue(mockPlayerCharacters);
 
-      await repository.getPlayerCharacterList();
+      await repository.getPlayerCharacterList({});
 
       expect(prismaService.playerCharacter.findMany).toHaveBeenCalledWith(
         expect.objectContaining({ take: 10 }),
@@ -129,6 +138,8 @@ describe('PlayerCharacterRepository', () => {
         displayAvatar: true,
         displayClass: true,
         displayLevel: true,
+        displayHp: true,
+        displayArmorClass: true,
         campaignId: 'campaign-123',
       };
 
@@ -145,6 +156,8 @@ describe('PlayerCharacterRepository', () => {
           displayAvatar: true,
           displayClass: true,
           displayLevel: true,
+          displayHp: true,
+          displayArmorClass: true,
           campaign: {
             connect: { id: 'campaign-123' },
           },
@@ -164,6 +177,8 @@ describe('PlayerCharacterRepository', () => {
         displayAvatar: true,
         displayClass: true,
         displayLevel: true,
+        displayHp: true,
+        displayArmorClass: true,
       });
 
       const callArg = (prismaService.playerCharacter.create as jest.Mock).mock

@@ -12,6 +12,7 @@ import {
 } from '../dto/session-streamer-response.dto';
 import { SessionStreamerGuard } from '../guard/session-streamer.guard';
 import { SessionGuard } from '../../session/guard/session.guard';
+import { OverlayLinkResponseDto } from '../dto/overlay-link-response.dto';
 
 const SESSION_ID_PARAM = {
   name: 'id',
@@ -165,4 +166,21 @@ export function JoinAsStreamerRoute(summary: string) {
       ),
     ],
   });
+}
+
+export function GetOverlayLinkRoute(summary: string) {
+  return applyDecorators(
+    UseGuards(SessionGuard),
+    ApiAuthRoute(summary, {
+      params: [SESSION_ID_PARAM],
+      responses: [
+        {
+          status: 200,
+          description: "Returns the requesting streamer's overlay links",
+          type: OverlayLinkResponseDto,
+        },
+        ...SESSION_GUARD_EXCEPTIONS,
+      ],
+    }),
+  );
 }

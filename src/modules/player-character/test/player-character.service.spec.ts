@@ -45,6 +45,7 @@ describe('PlayerCharacterService', () => {
       expect(result.count).toBe(2);
       expect(result.hasMore).toBe(false);
       expect(repository.getPlayerCharacterList).toHaveBeenCalledWith(
+        { campaignId: undefined },
         expect.objectContaining({ take: 11 }),
       );
     });
@@ -122,6 +123,8 @@ describe('PlayerCharacterService', () => {
         displayAvatar: true,
         displayClass: true,
         displayLevel: true,
+        displayHp: true,
+        displayArmorClass: true,
         campaignId: 'campaign-123',
       };
 

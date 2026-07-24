@@ -4,34 +4,20 @@ import { SessionController } from './session.controller';
 import { SessionService } from './session.service';
 import { SessionRepository } from './session.repository';
 import { SessionGateway } from './gateway/session.gateway';
-import { SessionEventService } from '../session-event/session-event.service';
-import { SessionEventRepository } from '../session-event/session-event.repository';
-import { SessionEventGuard } from '../session-event/guard/session-event.guard';
-import { EventRepository } from '../event/event.repository';
-import { KarmaEventModule } from '../karma-event/karma-event.module';
 import { AuthModule } from '../../auth/auth.module';
-import { JwtAuthGuard } from '../../auth/guard/jwt-auth.guard';
-import { SessionStreamerService } from '../session-streamer/session-streamer.service';
-import { SessionStreamerRepository } from '../session-streamer/session-streamer.repository';
-import { SessionStreamerGuard } from '../session-streamer/guard/session-streamer.guard';
-import { SessionStreamerController } from '../session-streamer/session-streamer.controller';
-import { InviteController } from '../session-streamer/invite.controller';
+import { SessionEventModule } from '../session-event/session-event.module';
+import { SessionStreamerModule } from '../session-streamer/session-streamer.module';
+import { KarmaEventModule } from '../karma-event/karma-event.module';
 
 @Module({
-  imports: [PrismaModule, KarmaEventModule, AuthModule],
-  controllers: [SessionController, SessionStreamerController, InviteController],
-  providers: [
-    SessionService,
-    SessionRepository,
-    SessionEventService,
-    SessionEventRepository,
-    SessionEventGuard,
-    EventRepository,
-    JwtAuthGuard,
-    SessionGateway,
-    SessionStreamerService,
-    SessionStreamerRepository,
-    SessionStreamerGuard,
+  imports: [
+    PrismaModule,
+    AuthModule,
+    KarmaEventModule,
+    SessionEventModule,
+    SessionStreamerModule,
   ],
+  controllers: [SessionController],
+  providers: [SessionService, SessionRepository, SessionGateway],
 })
 export class SessionModule {}

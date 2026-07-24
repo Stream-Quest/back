@@ -9,7 +9,10 @@ import {
   createMockSessionStreamer,
   createMockSessionStreamerWithUser,
 } from './fixtures/session-streamer.fixture';
-import { createMockSession } from '../../session/test/fixtures/session.fixture';
+import {
+  createMockSession,
+  createMockUser,
+} from '../../session/test/fixtures/session.fixture';
 
 describe('SessionStreamerController', () => {
   let controller: SessionStreamerController;
@@ -17,12 +20,14 @@ describe('SessionStreamerController', () => {
 
   const mockStreamer = createMockSessionStreamer();
   const mockSession = createMockSession();
+  const mockUser = createMockUser();
 
   const mockService = {
     getSessionStreamerList: jest.fn(),
     generateInviteLink: jest.fn(),
     updateSessionStreamer: jest.fn(),
     deleteSessionStreamer: jest.fn(),
+    getOverlayLink: jest.fn(),
   };
 
   const mockGuard = { canActivate: jest.fn().mockReturnValue(true) };
@@ -119,6 +124,29 @@ describe('SessionStreamerController', () => {
 
       expect(result).toEqual(mockStreamer);
       expect(service.deleteSessionStreamer).toHaveBeenCalledWith(mockStreamer);
+    });
+  });
+
+  describe('getMyOverlayLink', () => {
+    it("should return the requesting user's overlay links", async () => {
+      const mockOverlayLink = {
+        overlays: [
+          {
+            type: 'milestones',
+            url: 'https://overlay.app/overlay/session-123/milestones?token=xxx',
+            enabled: true,
+          },
+        ],
+      };
+      jest.spyOn(service, 'getOverlayLink').mockResolvedValue(mockOverlayLink);
+
+      const result = await controller.getMyOverlayLink('session-123', mockUser);
+
+      expect(result).toEqual(mockOverlayLink);
+      expect(service.getOverlayLink).toHaveBeenCalledWith(
+        'session-123',
+        mockUser.sub,
+      );
     });
   });
 });

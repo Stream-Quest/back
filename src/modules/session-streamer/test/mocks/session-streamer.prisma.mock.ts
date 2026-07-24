@@ -18,4 +18,9 @@ export const createSessionStreamerPrismaMock = () => ({
       },
     }),
   },
+  user: {
+    findUniqueOrThrow: jest
+      .fn()
+      .mockResolvedValue({ overlayToken: 'overlay-token-123' }),
+  },
 });

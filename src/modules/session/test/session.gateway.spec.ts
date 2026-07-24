@@ -5,6 +5,7 @@ import { PrismaService } from '../../../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { createMockSession } from './fixtures/session.fixture';
 import { createMockCampaign } from '../../campaign/test/fixtures/campaign.fixture';
+import { Server, Socket } from 'socket.io';
 
 const createMockRedisService = () => ({
   publish: jest.fn(),
@@ -24,22 +25,24 @@ const createMockJwtService = () => ({
   verify: jest.fn(),
 });
 
-const createMockSocket = (authOverrides: Record<string, string> = {}) => ({
-  id: 'socket-123',
-  data: {},
-  handshake: {
-    auth: authOverrides,
-  },
-  disconnect: jest.fn(),
-  emit: jest.fn(),
-  join: jest.fn().mockResolvedValue(undefined),
-  leave: jest.fn().mockResolvedValue(undefined),
-});
+const createMockSocket = (authOverrides: Record<string, string> = {}) =>
+  ({
+    id: 'socket-123',
+    data: {},
+    handshake: {
+      auth: authOverrides,
+    },
+    disconnect: jest.fn(),
+    emit: jest.fn(),
+    join: jest.fn().mockResolvedValue(undefined),
+    leave: jest.fn().mockResolvedValue(undefined),
+  }) as unknown as Socket;
 
-const createMockServer = () => ({
-  to: jest.fn().mockReturnThis(),
-  emit: jest.fn(),
-});
+const createMockServer = () =>
+  ({
+    to: jest.fn().mockReturnThis(),
+    emit: jest.fn(),
+  }) as unknown as Server;
 
 describe('SessionGateway', () => {
   let gateway: SessionGateway;
@@ -70,8 +73,6 @@ describe('SessionGateway', () => {
     jest.clearAllMocks();
   });
 
-  // ─── afterInit ──────────────────────────────────────────────────────────────
-
   describe('afterInit', () => {
     it('should subscribe to session:* pattern on Redis', async () => {
       await gateway.afterInit();
@@ -82,8 +83,6 @@ describe('SessionGateway', () => {
       );
     });
   });
-
-  // ─── handleConnection ───────────────────────────────────────────────────────
 
   describe('handleConnection', () => {
     it('should disconnect client when no token is provided', async () => {
@@ -155,8 +154,6 @@ describe('SessionGateway', () => {
     });
   });
 
-  // ─── handleDisconnect ───────────────────────────────────────────────────────
-
   describe('handleDisconnect', () => {
     it('should log client disconnection', () => {
       const client = createMockSocket();
@@ -164,8 +161,6 @@ describe('SessionGateway', () => {
       expect(() => gateway.handleDisconnect(client)).not.toThrow();
     });
   });
-
-  // ─── handleJoin ─────────────────────────────────────────────────────────────
 
   describe('handleJoin', () => {
     it('should disconnect unauthenticated client', async () => {
@@ -236,8 +231,6 @@ describe('SessionGateway', () => {
       });
     });
   });
-
-  // ─── handleLeave ────────────────────────────────────────────────────────────
 
   describe('handleLeave', () => {
     it('should leave the room and emit session:left', async () => {
