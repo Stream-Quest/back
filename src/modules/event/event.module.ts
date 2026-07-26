@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { PrismaModule } from '../../prisma/prisma.module';
+import { AuthModule } from '../../auth/auth.module';
 import { EventController } from './event.controller';
 import { EventService } from './event.service';
 import { EventRepository } from './event.repository';
@@ -13,7 +14,7 @@ import { ResolutionGuard } from '../resolution/guard/resolution.guard';
 import { EventTypeRepository } from '../event-type/event-type.repository';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, AuthModule],
   controllers: [EventController],
   providers: [
     EventService,

@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { PrismaModule } from '../../prisma/prisma.module';
+import { AuthModule } from '../../auth/auth.module';
 import { KarmaEventController } from './karma-event.controller';
 import { KarmaEventService } from './karma-event.service';
 import { KarmaEventRepository } from './karma-event.repository';
@@ -11,7 +12,7 @@ import { EventRepository } from '../event/event.repository';
 import { RedisModule } from '../../redis/redis.module';
 
 @Module({
-  imports: [PrismaModule, RedisModule],
+  imports: [PrismaModule, RedisModule, AuthModule],
   controllers: [KarmaEventController],
   providers: [
     KarmaEventService,
