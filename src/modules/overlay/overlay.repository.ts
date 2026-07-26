@@ -26,6 +26,7 @@ export class OverlayRepository {
         },
       },
     });
+
     return session?.campaign ?? null;
   }
 
@@ -49,6 +50,7 @@ export class OverlayRepository {
       where: { id: sessionId },
       select: { campaignId: true },
     });
+
     return session?.campaignId ?? null;
   }
 

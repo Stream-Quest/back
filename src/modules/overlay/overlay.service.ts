@@ -23,7 +23,9 @@ export class OverlayService {
 
   async getMilestones(sessionId: string) {
     const campaignId = await this.repository.getSessionCampaignId(sessionId);
+
     if (!campaignId) return [];
+
     return this.repository.getMilestones(campaignId);
   }
 }
