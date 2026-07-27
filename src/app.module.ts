@@ -33,6 +33,7 @@ const required = Joi.string().required();
         REDIS_PORT: required,
         REDIS_PASSWORD: required,
         OVERLAY_BASE_URL: required,
+        FRONTEND_URL: required,
       }),
     }),
     PrismaModule,
