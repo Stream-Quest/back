@@ -119,6 +119,15 @@ export class CreatePlayerCharacterDto {
   displayArmorClass: boolean;
 
   @ApiProperty({
+    example: true,
+    default: false,
+    description: 'Is the status displayable ?',
+  })
+  @IsBoolean()
+  @IsOptional()
+  displayStatus: boolean;
+
+  @ApiProperty({
     example: '550e8400-e29b-41d4-a716-446655440000',
     description: 'Campaign UUID (foreign key)',
   })
