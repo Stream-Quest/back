@@ -42,6 +42,8 @@ export class CreatePlayerCharacterDto {
     default: 10,
     description: "Player character's health points",
   })
+  @IsInt()
+  @IsOptional()
   maxHp?: number | null;
 
   @ApiPropertyOptional({
@@ -49,6 +51,8 @@ export class CreatePlayerCharacterDto {
     default: 10,
     description: "Player character's armor class",
   })
+  @IsInt()
+  @IsOptional()
   armorClass?: number | null;
 
   @ApiPropertyOptional({
@@ -101,6 +105,8 @@ export class CreatePlayerCharacterDto {
     default: true,
     description: 'Are the health points displayable ?',
   })
+  @IsBoolean()
+  @IsOptional()
   displayHp: boolean;
 
   @ApiProperty({
@@ -108,6 +114,8 @@ export class CreatePlayerCharacterDto {
     default: false,
     description: 'Is the armor class displayable ?',
   })
+  @IsBoolean()
+  @IsOptional()
   displayArmorClass: boolean;
 
   @ApiProperty({
