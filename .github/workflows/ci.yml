@@ -47,6 +47,7 @@ jobs:
       REDIS_PORT: 6379
       REDIS_PASSWORD: ''
       FRONTEND_URL: http://localhost:3000
+      OVERLAY_BASE_URL: http://localhost:3000/overlay
       TWITCH_CALLBACK_URL: http://localhost:3999/auth/twitch/callback
       TWITCH_WEBHOOK_CALLBACK_URL: http://localhost:3999/twitch/webhook
       # Secrets

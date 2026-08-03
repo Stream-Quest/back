@@ -70,7 +70,7 @@ export class CampaignEventController {
   async updateCampaignEvent(
     @Body() updateDto: UpdateCampaignEventDto,
     @CampaignEventContext() campaignEvent: CampaignEvent,
-  ) {
+  ): Promise<CampaignEventResponseDto> {
     return await this.campaignEventService.updateCampaignEvent(
       updateDto,
       campaignEvent,
@@ -81,7 +81,7 @@ export class CampaignEventController {
   @DeleteCampaignEventRoute("Delete a Campaign's event")
   async deleteCampaignEvent(
     @CampaignEventContext() campaignEvent: CampaignEvent,
-  ): Promise<CampaignEvent> {
+  ): Promise<CampaignEventResponseDto> {
     return await this.campaignEventService.deleteCampaignEvent(campaignEvent);
   }
 }

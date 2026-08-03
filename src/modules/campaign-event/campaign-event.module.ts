@@ -6,6 +6,7 @@ import { CampaignEventService } from './campaign-event.service';
 import { CampaignEventRepository } from './campaign-event.repository';
 import { CampaignEventGuard } from './guard/campaign-event.guard';
 import { CampaignGuard } from '../campaign/guard/campaign.guard';
+import { EventRepository } from '../event/event.repository';
 
 @Module({
   imports: [PrismaModule, AuthModule],
@@ -15,6 +16,7 @@ import { CampaignGuard } from '../campaign/guard/campaign.guard';
     CampaignEventRepository,
     CampaignEventGuard,
     CampaignGuard,
+    EventRepository,
   ],
   exports: [CampaignEventService],
 })

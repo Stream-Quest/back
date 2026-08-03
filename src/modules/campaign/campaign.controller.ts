@@ -31,17 +31,13 @@ import { UserContext } from '../../decorators/user.decorator';
 import { CampaignContext } from './decorator/campaign.decorator';
 import type { Campaign } from '../../generated/prisma/client';
 import { PaginationResponseDto } from '../../dto/pagination-response.dto';
-import { CampaignEventService } from '../campaign-event/campaign-event.service';
 import { UpdateKarmaResponseDto } from '../karma-event/dto/update-karma-response.dto';
 import type { JwtPayloadInterface } from '../../auth/interface/auth.interface';
 
 @ApiTags('Campaign')
 @Controller('campaign')
 export class CampaignController {
-  constructor(
-    private readonly campaignService: CampaignService,
-    private readonly campaignEventService: CampaignEventService,
-  ) {}
+  constructor(private readonly campaignService: CampaignService) {}
 
   @Get('')
   @GetCampaignListRoute("Get user's campaigns")

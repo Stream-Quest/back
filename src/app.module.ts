@@ -14,9 +14,12 @@ import { EventModule } from './modules/event/event.module';
 import { KarmaEventModule } from './modules/karma-event/karma-event.module';
 import { TwitchModule } from './modules/twitch/twitch.module';
 import { TwitchMappingModule } from './modules/twitch-mapping/twitch-mapping.module';
+import { SessionPlayerCharacterModule } from './modules/session-player-character/session-player-character.module';
+import { SessionStreamerModule } from './modules/session-streamer/session-streamer.module';
+import { OverlayModule } from './modules/overlay/overlay.module';
+import { CampaignEventModule } from './modules/campaign-event/campaign-event.module';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
-import { OverlayModule } from './modules/overlay/overlay.module';
 
 const required = Joi.string().required();
 
@@ -31,7 +34,7 @@ const required = Joi.string().required();
         TWITCH_WEBHOOK_CALLBACK_URL: required,
         REDIS_HOST: required,
         REDIS_PORT: required,
-        REDIS_PASSWORD: required,
+        REDIS_PASSWORD: Joi.string().allow('').required(),
         OVERLAY_BASE_URL: required,
         FRONTEND_URL: required,
       }),
@@ -50,6 +53,9 @@ const required = Joi.string().required();
     TwitchModule,
     TwitchMappingModule,
     OverlayModule,
+    SessionPlayerCharacterModule,
+    SessionStreamerModule,
+    CampaignEventModule,
   ],
   controllers: [AppController],
   providers: [AppService],
