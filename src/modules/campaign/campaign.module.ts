@@ -4,20 +4,13 @@ import { CampaignService } from './campaign.service';
 import { PrismaModule } from '../../prisma/prisma.module';
 import { AuthModule } from '../../auth/auth.module';
 import { CampaignRepository } from './campaign.repository';
-import { CampaignEventService } from '../campaign-event/campaign-event.service';
-import { CampaignEventRepository } from '../campaign-event/campaign-event.repository';
 import { EventRepository } from '../event/event.repository';
 import { KarmaEventModule } from '../karma-event/karma-event.module';
+import { CampaignEventModule } from '../campaign-event/campaign-event.module';
 
 @Module({
-  imports: [PrismaModule, KarmaEventModule, AuthModule],
+  imports: [PrismaModule, KarmaEventModule, AuthModule, CampaignEventModule],
   controllers: [CampaignController],
-  providers: [
-    CampaignService,
-    CampaignRepository,
-    CampaignEventService,
-    CampaignEventRepository,
-    EventRepository,
-  ],
+  providers: [CampaignService, CampaignRepository, EventRepository],
 })
 export class CampaignModule {}
