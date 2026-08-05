@@ -2,6 +2,7 @@ import { applyDecorators, UseGuards } from '@nestjs/common';
 import { ApiAuthRoute } from '../../../auth/decorator/api-auth.decorator';
 import { SessionStatus } from '../../../generated/prisma/enums';
 import {
+  ApiPaginatedResponse,
   customErrorResponse,
   multipleErrorResponses,
   PAGINATION_QUERIES,
@@ -36,31 +37,29 @@ const SESSION_OWNERSHIP_GUARD_EXCEPTIONS = [
 ];
 
 export function GetSessionListRoute(summary: string) {
-  return ApiAuthRoute(summary, {
-    queries: [
-      {
-        name: 'status',
-        enum: SessionStatus,
-        description: 'Filter sessions by status',
-        example: SessionStatus.LIVE,
-        required: false,
-      },
-      {
-        name: 'campaignId',
-        description: "Filter a campaign's sessions",
-        example: '550e8400-e29b-41d4-a716-446655440000',
-        required: false,
-      },
-      ...PAGINATION_QUERIES,
-    ],
-    responses: [
-      {
-        status: 200,
-        description: 'Returns the list of sessions for a campaign',
-        type: [SessionResponseDto],
-      },
-    ],
-  });
+  return applyDecorators(
+    ApiAuthRoute(summary, {
+      queries: [
+        {
+          name: 'status',
+          enum: SessionStatus,
+          description: 'Filter sessions by status',
+          example: SessionStatus.LIVE,
+          required: false,
+        },
+        {
+          name: 'campaignId',
+          description: "Filter a campaign's sessions",
+          example: '550e8400-e29b-41d4-a716-446655440000',
+          required: false,
+        },
+        ...PAGINATION_QUERIES,
+      ],
+    }),
+    ApiPaginatedResponse(SessionResponseDto, {
+      description: 'Returns the list of sessions for a campaign',
+    }),
+  );
 }
 
 export function GetSessionDetailsRoute(summary: string) {

@@ -3,6 +3,7 @@ import { ApiAuthRoute } from '../../../auth/decorator/api-auth.decorator';
 import { CampaignGuard } from '../../campaign/guard/campaign.guard';
 import { TwitchMappingGuard } from '../guard/twitch-mapping.guard';
 import {
+  ApiPaginatedResponse,
   customErrorResponse,
   multipleErrorResponses,
   PAGINATION_QUERIES,
@@ -76,14 +77,10 @@ export function GetTwitchMappingListRoute(summary: string) {
         },
         ...PAGINATION_QUERIES,
       ],
-      responses: [
-        {
-          status: 200,
-          description: 'Returns twitch mappings for the campaign',
-          type: [TwitchMappingResponseDto],
-        },
-        ...CAMPAIGN_GUARD_EXCEPTIONS,
-      ],
+      responses: [...CAMPAIGN_GUARD_EXCEPTIONS],
+    }),
+    ApiPaginatedResponse(TwitchMappingResponseDto, {
+      description: 'Returns twitch mappings for the campaign',
     }),
   );
 }

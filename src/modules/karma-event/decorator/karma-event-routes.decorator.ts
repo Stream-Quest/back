@@ -3,6 +3,7 @@ import { ApiAuthRoute } from '../../../auth/decorator/api-auth.decorator';
 import { CampaignGuard } from '../../campaign/guard/campaign.guard';
 import { ThresholdEventGuard } from '../../threshold-event/guard/threshold-event.guard';
 import {
+  ApiPaginatedResponse,
   customErrorResponse,
   multipleErrorResponses,
   PAGINATION_QUERIES,
@@ -74,14 +75,10 @@ export function GetKarmaEventListRoute(summary: string) {
         },
         ...PAGINATION_QUERIES,
       ],
-      responses: [
-        {
-          status: 200,
-          description: 'Returns the karma history of the campaign',
-          type: [KarmaEventResponseDto],
-        },
-        ...CAMPAIGN_GUARD_EXCEPTIONS,
-      ],
+      responses: [...CAMPAIGN_GUARD_EXCEPTIONS],
+    }),
+    ApiPaginatedResponse(KarmaEventResponseDto, {
+      description: 'Returns the karma history of the campaign',
     }),
   );
 }
@@ -128,14 +125,10 @@ export function GetThresholdEventListRoute(summary: string) {
         },
         ...PAGINATION_QUERIES,
       ],
-      responses: [
-        {
-          status: 200,
-          description: 'Returns the threshold events of the campaign',
-          type: [ThresholdEventResponseDto],
-        },
-        ...CAMPAIGN_GUARD_EXCEPTIONS,
-      ],
+      responses: [...CAMPAIGN_GUARD_EXCEPTIONS],
+    }),
+    ApiPaginatedResponse(ThresholdEventResponseDto, {
+      description: 'Returns the threshold events of the campaign',
     }),
   );
 }

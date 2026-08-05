@@ -1,5 +1,6 @@
 import { applyDecorators, UseGuards } from '@nestjs/common';
 import {
+  ApiPaginatedResponse,
   customErrorResponse,
   multipleErrorResponses,
   PAGINATION_QUERIES,
@@ -72,14 +73,10 @@ export function GetSessionEventListRoute(summary: string) {
         },
         ...PAGINATION_QUERIES,
       ],
-      responses: [
-        {
-          status: 200,
-          description: 'Returns the list of session events',
-          type: [SessionEventResponseDto],
-        },
-        ...SESSION_GUARD_EXCEPTIONS,
-      ],
+      responses: [...SESSION_GUARD_EXCEPTIONS],
+    }),
+    ApiPaginatedResponse(SessionEventResponseDto, {
+      description: 'Returns the list of session events',
     }),
   );
 }

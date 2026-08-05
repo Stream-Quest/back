@@ -1,6 +1,7 @@
 import { applyDecorators, UseGuards } from '@nestjs/common';
 import { ApiAuthRoute } from '../../../auth/decorator/api-auth.decorator';
 import {
+  ApiPaginatedResponse,
   customErrorResponse,
   PAGINATION_QUERIES,
 } from '../../../helpers/swagger.helper';
@@ -20,16 +21,14 @@ const EVENT_TYPE_OWNERSHIP_GUARD_EXCEPTIONS = [
 ];
 
 export function GetEventTypeListRoute(summary: string) {
-  return ApiAuthRoute(summary, {
-    queries: [...PAGINATION_QUERIES],
-    responses: [
-      {
-        status: 200,
-        description: 'Returns the list of event types',
-        type: [EventTypeResponseDto],
-      },
-    ],
-  });
+  return applyDecorators(
+    ApiAuthRoute(summary, {
+      queries: [...PAGINATION_QUERIES],
+    }),
+    ApiPaginatedResponse(EventTypeResponseDto, {
+      description: 'Returns the list of event types',
+    }),
+  );
 }
 
 export function GetEventTypeDetailsRoute(summary: string) {

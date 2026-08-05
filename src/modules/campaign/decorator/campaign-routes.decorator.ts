@@ -3,6 +3,7 @@ import { CampaignResponseDto } from '../dto/campaign-response.dto';
 import { ApiAuthRoute } from '../../../auth/decorator/api-auth.decorator';
 import { CampaignGuard } from '../guard/campaign.guard';
 import {
+  ApiPaginatedResponse,
   customErrorResponse,
   multipleErrorResponses,
   PAGINATION_QUERIES,
@@ -32,25 +33,23 @@ export const CAMPAIGN_OWNERSHIP_GUARD_EXCEPTIONS = [
 ];
 
 export function GetCampaignListRoute(summary: string) {
-  return ApiAuthRoute(summary, {
-    queries: [
-      {
-        name: 'status',
-        enum: FilterDeletionStatus,
-        description: 'Filter campaigns by deletion status',
-        example: FilterDeletionStatus.ACTIVE,
-        required: false,
-      },
-      ...PAGINATION_QUERIES,
-    ],
-    responses: [
-      {
-        status: 200,
-        description: 'Returns the list of campaigns of the logged user',
-        type: [CampaignResponseDto],
-      },
-    ],
-  });
+  return applyDecorators(
+    ApiAuthRoute(summary, {
+      queries: [
+        {
+          name: 'status',
+          enum: FilterDeletionStatus,
+          description: 'Filter campaigns by deletion status',
+          example: FilterDeletionStatus.ACTIVE,
+          required: false,
+        },
+        ...PAGINATION_QUERIES,
+      ],
+    }),
+    ApiPaginatedResponse(CampaignResponseDto, {
+      description: 'Returns the list of campaigns of the logged user',
+    }),
+  );
 }
 
 export function GetCampaignDetailsRoute(summary: string) {

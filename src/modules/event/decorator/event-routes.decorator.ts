@@ -1,6 +1,7 @@
 import { applyDecorators, UseGuards } from '@nestjs/common';
 import { ApiAuthRoute } from '../../../auth/decorator/api-auth.decorator';
 import {
+  ApiPaginatedResponse,
   customErrorResponse,
   multipleErrorResponses,
   PAGINATION_QUERIES,
@@ -82,39 +83,37 @@ const RESOLUTION_GUARD_EXCEPTIONS = [
 ];
 
 export function GetEventListRoute(summary: string) {
-  return ApiAuthRoute(summary, {
-    queries: [
-      ...PAGINATION_QUERIES,
-      {
-        name: 'isTemplate',
-        type: Boolean,
-        description: 'Filter events by template status',
-        example: true,
-        required: false,
-      },
-      {
-        name: 'isPublic',
-        type: Boolean,
-        description: 'Filter events by public status',
-        example: true,
-        required: false,
-      },
-      {
-        name: 'eventTypeId',
-        type: String,
-        description: 'Filter events by event type',
-        example: '550e8400-e29b-41d4-a716-446655440000',
-        required: false,
-      },
-    ],
-    responses: [
-      {
-        status: 200,
-        description: 'Returns the list of events',
-        type: [EventResponseDto],
-      },
-    ],
-  });
+  return applyDecorators(
+    ApiAuthRoute(summary, {
+      queries: [
+        ...PAGINATION_QUERIES,
+        {
+          name: 'isTemplate',
+          type: Boolean,
+          description: 'Filter events by template status',
+          example: true,
+          required: false,
+        },
+        {
+          name: 'isPublic',
+          type: Boolean,
+          description: 'Filter events by public status',
+          example: true,
+          required: false,
+        },
+        {
+          name: 'eventTypeId',
+          type: String,
+          description: 'Filter events by event type',
+          example: '550e8400-e29b-41d4-a716-446655440000',
+          required: false,
+        },
+      ],
+    }),
+    ApiPaginatedResponse(EventResponseDto, {
+      description: 'Returns the list of events',
+    }),
+  );
 }
 
 export function GetEventDetailsRoute(summary: string) {
