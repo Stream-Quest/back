@@ -1,4 +1,11 @@
-import { ApiResponseOptions } from '@nestjs/swagger';
+import { applyDecorators, Type } from '@nestjs/common';
+import {
+  ApiExtraModels,
+  ApiOkResponse,
+  ApiResponseOptions,
+  getSchemaPath,
+} from '@nestjs/swagger';
+import { PaginationResponseDto } from '../dto/pagination-response.dto';
 
 export const PAGINATION_QUERIES = [
   {
@@ -23,6 +30,31 @@ export const PAGINATION_QUERIES = [
     required: false,
   },
 ];
+
+export function ApiPaginatedResponse<TModel extends Type<unknown>>(
+  dataDto: TModel,
+  options: { description?: string } = {},
+) {
+  return applyDecorators(
+    ApiExtraModels(PaginationResponseDto, dataDto),
+    ApiOkResponse({
+      description: options.description ?? 'Returns a paginated list',
+      schema: {
+        allOf: [
+          { $ref: getSchemaPath(PaginationResponseDto) },
+          {
+            properties: {
+              data: {
+                type: 'array',
+                items: { $ref: getSchemaPath(dataDto) },
+              },
+            },
+          },
+        ],
+      },
+    }),
+  );
+}
 
 export function customErrorResponse(
   status: number,

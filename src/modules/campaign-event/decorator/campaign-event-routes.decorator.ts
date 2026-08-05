@@ -1,6 +1,7 @@
 import { applyDecorators, UseGuards } from '@nestjs/common';
 import { ApiAuthRoute } from '../../../auth/decorator/api-auth.decorator';
 import {
+  ApiPaginatedResponse,
   customErrorResponse,
   multipleErrorResponses,
   PAGINATION_QUERIES,
@@ -44,14 +45,10 @@ export function GetCampaignEventListRoute(summary: string) {
     ApiAuthRoute(summary, {
       params: [CAMPAIGN_ID_PARAM],
       queries: [...PAGINATION_QUERIES],
-      responses: [
-        {
-          status: 200,
-          description: 'Returns the list of events linked to the campaign',
-          type: [CampaignEventResponseDto],
-        },
-        ...CAMPAIGN_OWNERSHIP_GUARD_EXCEPTIONS,
-      ],
+      responses: [...CAMPAIGN_OWNERSHIP_GUARD_EXCEPTIONS],
+    }),
+    ApiPaginatedResponse(CampaignEventResponseDto, {
+      description: 'Returns the list of events linked to the campaign',
     }),
   );
 }

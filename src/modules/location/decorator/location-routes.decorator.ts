@@ -1,6 +1,7 @@
 import { applyDecorators, UseGuards } from '@nestjs/common';
 import { ApiAuthRoute } from '../../../auth/decorator/api-auth.decorator';
 import {
+  ApiPaginatedResponse,
   customErrorResponse,
   PAGINATION_QUERIES,
 } from '../../../helpers/swagger.helper';
@@ -20,16 +21,14 @@ const LOCATION_OWNERSHIP_GUARD_EXCEPTIONS = [
 ];
 
 export function GetLocationListRoute(summary: string) {
-  return ApiAuthRoute(summary, {
-    queries: [...PAGINATION_QUERIES],
-    responses: [
-      {
-        status: 200,
-        description: 'Returns the list of locations',
-        type: [LocationResponseDto],
-      },
-    ],
-  });
+  return applyDecorators(
+    ApiAuthRoute(summary, {
+      queries: [...PAGINATION_QUERIES],
+    }),
+    ApiPaginatedResponse(LocationResponseDto, {
+      description: 'Returns the list of locations',
+    }),
+  );
 }
 
 export function GetLocationDetailsRoute(summary: string) {
